@@ -73,9 +73,13 @@ action_name     = neuer Action-Name z.B.: TurnOn (gleich geschrieben wie in der 
 
 directive_type  = gleich wie action_name (nur notwendig wegen Kompatibilität V2 und V3)
 
-response_type   = Property des Alexa Interfaces - siehe Amazon z.B. : https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#properties
+response_type   = Property des Alexa Interfaces
+siehe Amazon z.B. : https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#properties
 
 
-namespace       = NameSpace des Alexa Interfaces - siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#directives
+namespace       = NameSpace des Alexa Interfaces
+siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#directives
+
+
 
 
