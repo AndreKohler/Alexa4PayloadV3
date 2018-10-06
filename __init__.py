@@ -3,6 +3,7 @@
 # vim: set encoding=utf-8 tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 #########################################################################
 #  Copyright 2016 Kai Meder <kai@meder.info>
+#  fork 2018 for Alexa Payload Version 3 Andre Kohler <andre.kohler01@googlemail.com>
 #########################################################################
 #  This file is part of SmartHomeNG.
 #
@@ -21,9 +22,6 @@
 #########################################################################
 import os
 import sys
-
-sys.path.append('/home/akohler/Eclipse/eclipse/plugins/org.python.pydev.core_6.3.3.201805051638/pysrc')
-import pydevd
 
 
 from lib.model.smartplugin import SmartPlugin
@@ -69,12 +67,10 @@ class Alexa4P3(SmartPlugin):
 
     def parse_item(self, item):
         # device/appliance
-        #pydevd.settrace("192.168.178.37", port=5678)
         self.logger.debug('Parse-Item')
         device_id = None
         if 'alexa_device' in item.conf:
             device_id = item.conf['alexa_device']
-            #pydevd.settrace("192.168.178.37", port=5678)
         # supported actions/directives
         action_names = None
         if 'alexa_actions' in item.conf:
