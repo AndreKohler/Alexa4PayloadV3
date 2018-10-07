@@ -29,6 +29,7 @@ Die sonstigen Parameter aus dem ursprüngliche Alexa-Plugin bleiben erhalten und
 
 Beispiel für Item:
 
+<pre><code>    
 [OG]
     [[Flur]]
         name = Flur_Obeschoss
@@ -62,6 +63,8 @@ Beispiel für Item:
         knx_listen = 1/1/133
         knx_send = 1/1/133
         enforce_updates = true
+
+</code></pre>
 
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden (siehe Quellcode)
 
