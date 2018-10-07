@@ -23,6 +23,10 @@ Das ursprünglich Plugin kann deaktiviertwerden :
 #    service_port: 9000
 </code></pre>
 
+Idealerweise kopiert man sich seine ganzen conf/yaml Files aus dem Items-Verzeichnis.
+und ersetzt dann die "alten" Actions durch die "Neuen". Nachdem der Skill auf Payload V3 umgestellt wurde
+muss ein Discover durchgeführt werden. Im besten Fall funktioniert dann alles wie gwohnt.
+
 In den Items sind die "neuen" V3 Actions zu definieren :
 
 Zum Beispiel :
