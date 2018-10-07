@@ -7,7 +7,21 @@ PayLoad Version 3 umgestellt werden. Alles andere kann unverändert weiterverwen
 
 Das Plugin muss in der plugin.yaml eingefügt werden :
 
+<pre><code>    
+Alexa4P3:
+    class_name: Alexa4P3
+    class_path: plugins.alexa4p3
+    service_port: 9000
+</code></pre>
+
 Das ursprünglich Plugin kann deaktiviertwerden :
+
+<pre><code>    
+#alexa:
+#    class_name: Alexa
+#    class_path: plugins.alexa
+#    service_port: 9000
+</code></pre>
 
 In den Items sind die "neuen" V3 Actions zu definieren :
 
@@ -66,11 +80,15 @@ Beispiel für Item:
 
 </code></pre>
 
-Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden (siehe Quellcode)
+Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
+(wie ursprünglich als selbstregistrierende Funktion)
+
+</pre></code>
+@alexa('action_name', 'directive_type', 'response_type','namespace') // in der Datei p3_actions.py
+@alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController') // in der Datei p3_actions.py
+</code></pre>
 
 Hierbei ist zu beachten, das in für die jeweilige Action die folgenden Paramter übergeben werden :
-
-def alexa(action_name, directive_type, response_type, namespace ) // in der Datei p3_actions.py
 
 action_name     = neuer Action-Name z.B.: TurnOn (gleich geschrieben wie in der Amazon-Beschreibung - auch Gross/Klein) 
 
@@ -79,10 +97,11 @@ directive_type  = gleich wie action_name (nur notwendig wegen Kompatibilität V2
 response_type   = Property des Alexa Interfaces
 siehe Amazon z.B. : https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#properties
 
-
 namespace       = NameSpace des Alexa Interfaces
 siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html#directives
 
+In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
+(siehe Quellcode)
 
 
 
