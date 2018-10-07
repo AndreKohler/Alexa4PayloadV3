@@ -2,9 +2,7 @@
 # https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/smart-home-skill-api-reference
 import os
 import sys
-
-sys.path.append('/home/akohler/Eclipse/eclipse/plugins/org.python.pydev.core_6.3.3.201805051638/pysrc')
-import pydevd
+from argparse import Namespace
 
 
 
@@ -137,7 +135,6 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 payload =  self.search( req,'payload')
                 if header['namespace'] == 'Alexa.Discovery':
                     return self.p3_handle_discovery(header, payload)
-                #pydevd.settrace("192.168.178.37", port=5678)
                 if header['namespace'] == 'Alexa':
                     return self.p3_handle_control(header, payload,mydirective)
                 
@@ -158,7 +155,6 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
     #========================================================
     
     def handle_system(self, header, payload):
-        pydevd.settrace("192.168.178.37", port=5678)
         directive = header['name']
         self.logger.debug("Alexa: system-directive '{}' received".format(directive))
 
@@ -207,42 +203,58 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
     def p3_discover_appliances(self):
         discovered = []
         for device in self.devices.all():
-            if len(device.namespace) != 0:
-                mycapabilities = []
+            # Start - Check Namespaces for Actions
+            myNameSpace = {}
+            myItems = device.backed_items()
+            for Item in myItems:
+                # Get all  Actions for this item
+                action_names = list( map(str.strip, Item.conf['alexa_actions'].split(' ')) )
+                # über alle Actions für dieses item
+                for myActionName in action_names:
+                    myAction = self.actions.by_name(myActionName)
+                    if myAction.namespace not in str(myNameSpace):
+                        myNameSpace[myAction.namespace] = myAction.response_type 
+                for NameSpace in myNameSpace:
+                    print (NameSpace, 'correspondend to ', myNameSpace[NameSpace])
+                # End - Check Namespaces
+            
+            mycapabilities = []
 
-                newcapa = {"type": "AlexaInterface",
-                           "interface": "Alexa",
-                           "version": "3"
-                          }
-                mycapabilities.append(newcapa)
-                
-                # Standard capability for Connectivity
-                newcapa = {"type": "AlexaInterface",
-                           "interface": "Alexa.EndpointHealth",
-                           "version": "3",
-                           "properties": {
-                               "supported": [
-                                   {
-                                       "name": "connectivity"
-                                   }
-                            ],
-                           "proactivelyReported": False,
-                           "retrievable": True
-                           }
-                           }
-                mycapabilities.append(newcapa)
-                      
-                for myControl in device.namespace:
+            newcapa = {"type": "AlexaInterface",
+                       "interface": "Alexa",
+                       "version": "3"
+                      }
+            mycapabilities.append(newcapa)
+            
+            # Standard capability for Connectivity
+            newcapa = {"type": "AlexaInterface",
+                       "interface": "Alexa.EndpointHealth",
+                       "version": "3",
+                       "properties": {
+                           "supported": [
+                               {
+                                   "name": "connectivity"
+                               }
+                        ],
+                       "proactivelyReported": False,
+                       "retrievable": True
+                       }
+                       }
+            mycapabilities.append(newcapa)
+            
+            if len(myNameSpace) != 0:          
+                for NameSpace in myNameSpace:
+                    print (NameSpace, 'correspondend to ', myNameSpace[NameSpace])
                     
                     newcapa = {}
                     newcapa = {
                         "type": "AlexaInterface",
-                        "interface": myControl,
+                        "interface": NameSpace,
                         "version": "3",
                         "properties": {
                             "supported": [
                                 {
-                                    "name": capability_list[myControl]
+                                    "name": myNameSpace[NameSpace]
                                     }
                                 ],
                             "proactivelyReported": device.proactivelyReported,

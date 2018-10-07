@@ -9,6 +9,9 @@ import uuid
 from datetime import datetime
 
 
+
+
+
 from .action import alexa
 
 DEFAULT_RANGE = (0, 100)
@@ -25,6 +28,7 @@ def calc_percentage(percent, range):
 def clamp_percentage(percent, range):
     _min, _max = range
     return min(_max, max(_min, percent))
+    #pydevd.settrace("192.168.178.37", port=5678)
 
 #======================================================
 # Start - A.Kohler
@@ -38,6 +42,7 @@ def clamp_percentage(percent, range):
 def TurnOn(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
+    #pydevd.settrace("192.168.178.37", port=5678)
     for item in items:
         on, off = self.item_range(item, DEFAULT_RANGE_LOGIC)
         self.logger.info("Alexa: turnOn({}, {})".format(item.id(), on))
@@ -98,6 +103,7 @@ def Unlock(self, directive):
 
 @alexa('AdjustBrightness', 'AdjustBrightness', 'brightness','Alexa.BrightnessController')
 def AdjustBrightness(self, directive):
+    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     
@@ -118,6 +124,7 @@ def AdjustBrightness(self, directive):
 
 @alexa('SetBrightness', 'SetBrightness', 'brightness','Alexa.BrightnessController')
 def SetBrightness(self, directive):
+    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     new_percentage = float( directive['payload']['brightness'] )
@@ -138,6 +145,7 @@ def SetBrightness(self, directive):
 
 @alexa('AdjustPercentage', 'AdjustPercentage', 'percentage','Alexa.PercentageController')
 def AdjustPercentage(self, directive):
+    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     
@@ -158,6 +166,7 @@ def AdjustPercentage(self, directive):
     
 @alexa('SetPercentage', 'SetPercentage', 'percentage','Alexa.PercentageController')
 def SetPercentage(self, directive):
+    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     new_percentage = float( directive['payload']['percentage'] )

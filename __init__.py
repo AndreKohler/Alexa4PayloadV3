@@ -3,7 +3,7 @@
 # vim: set encoding=utf-8 tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 #########################################################################
 #  Copyright 2016 Kai Meder <kai@meder.info>
-#  fork 2018 for Alexa Payload Version 3 Andre Kohler <andre.kohler01@googlemail.com>
+#  fork 2018 Andre Kohler <andre.kohler01@googlemail.com>
 #########################################################################
 #  This file is part of SmartHomeNG.
 #
