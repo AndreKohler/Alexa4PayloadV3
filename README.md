@@ -1,6 +1,8 @@
 # Alexa4PayloadV3
 Alexa4PayloadV3
 
+Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
+Die Rechte entsprechend setzen.
 
 Um die neuen Payload-Features nutzen zu können muss lediglich die Skill-Version in der Amazon Hölle auf
 PayLoad Version 3 umgestellt werden. Alles andere kann unverändert weiterverwendet werden.
