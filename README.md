@@ -25,7 +25,7 @@ Das ursprünglich Plugin kann deaktiviertwerden :
 
 Idealerweise kopiert man sich seine ganzen conf/yaml Files aus dem Items-Verzeichnis.
 und ersetzt dann die "alten" Actions durch die "Neuen". Nachdem der Skill auf Payload V3 umgestellt wurde
-muss ein Discover durchgeführt werden. Im besten Fall funktioniert dann alles wie gwohnt.
+muss ein Discover durchgeführt werden. Im besten Fall funktioniert dann alles wie gewohnt.
 
 In den Items sind die "neuen" V3 Actions zu definieren :
 
