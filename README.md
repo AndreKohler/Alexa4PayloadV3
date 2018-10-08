@@ -145,7 +145,6 @@ Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entspreche
 
 </pre><code>
 @alexa('action_name', 'directive_type', 'response_type','namespace') // in der Datei p3_actions.py
-
 @alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController') // in der Datei p3_actions.py
 </code></pre>
 
