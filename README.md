@@ -44,6 +44,14 @@ Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet w
 
 default = "Switch" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
 
+Optional kann im Item angegeben werden ob es durch Amazon abgefragt werden kann :
+<pre><code>    
+	alexa_retrievable = true
+</code></pre>
+
+default = false
+
+
 Die sonstigen Parameter aus dem ursprüngliche Alexa-Plugin bleiben erhalten und werden weiterhin genutzt.
 (alexa_name / alexa_device / alexa_description / alexa_actions /alexa_item_range)
 
@@ -89,9 +97,11 @@ Beispiel für Item:
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
-</pre></code>
+</pre><code>
+
 @alexa('action_name', 'directive_type', 'response_type','namespace') // in der Datei p3_actions.py
 @alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController') // in der Datei p3_actions.py
+
 </code></pre>
 
 Hierbei ist zu beachten, das in für die jeweilige Action die folgenden Paramter übergeben werden :
