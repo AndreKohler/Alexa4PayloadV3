@@ -143,10 +143,11 @@ OG:
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
-</pre><code>
-@alexa('action_name', 'directive_type', 'response_type','namespace') // in der Datei p3_actions.py
+<pre><code>
 
+@alexa('action_name', 'directive_type', 'response_type','namespace') // in der Datei p3_actions.py
 @alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController') // in der Datei p3_actions.py
+
 </code></pre>
 
 Hierbei ist zu beachten, das in für die jeweilige Action die folgenden Paramter übergeben werden :
