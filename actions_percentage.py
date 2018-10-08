@@ -1,8 +1,6 @@
 import os
 import sys
 
-sys.path.append('/home/akohler/Eclipse/eclipse/plugins/org.python.pydev.core_6.3.3.201805051638/pysrc')
-import pydevd
 
 from .action import alexa
 
@@ -19,7 +17,7 @@ def calc_percentage(percent, range):
 def clamp_percentage(percent, range):
     _min, _max = range
     return min(_max, max(_min, percent))
-#pydevd.settrace("192.168.178.37", port=5678)
+
     
 @alexa('setPercentage', 'SetPercentageRequest', 'SetPercentageConfirmation','')
 def set_percentage(self, payload):
