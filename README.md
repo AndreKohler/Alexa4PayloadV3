@@ -220,7 +220,7 @@ alexa_actions = "SetThermostatMode"
 Hier wird das Item des Modus angesteuert. Diese Action muss beim Item des Thermostat-Modes eingetragen werden.
 Falls keine Modes angegeben wurden wird "0:AUTO" als default gesetzt
 
-Alexa stelle den Thermostaten Küchen auf Heizen
+Alexa stelle den Thermostaten Küche auf Heizen
 
 
 <pre><code>   
@@ -280,7 +280,7 @@ EG:
                 alexa_device : thermo_Kueche 
 </code></pre>
 
-Beispiel für einen MDT-Glastron, der Modus wird auf Objekt 12 in der ETS-Paramtrierung gesendet (Hierzu eine entsprechende 
+Beispiel für einen MDT-Glastron, der Modus wird auf Objekt 12 in der ETS-Parametrierung gesendet (Hierzu eine entsprechende 
 Gruppenadresse anlegen)
 
 <pre><code>   
