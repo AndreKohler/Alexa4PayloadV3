@@ -165,5 +165,176 @@ siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/alexa-brightnes
 In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
 (siehe Quellcode)
 
+# Alexa-ThermostatController + Thermosensor hinzugefügt
 
 
+Es kann nun via Alexa die Solltemperatur verändert werden und der Modus des Thermostaten kann umgestellt werden.
+Die Konfiguration der YAML-Datei sieht wie folgt aus
+
+Es müssen beim Thermostaten in YAML die Einträge für :
+alexa_thermo_config, alexa_icon, alexa_actions vorgenommen werden.
+
+alexa_thermo_config = "0:AUTO 1:HEAT 2:COOL 3:ECO 4:ECO"
+Hierbei stehen die Werte für für die KNX-Werte von DPT 20
+
+<pre><code>   
+$00 Auto
+$01 Comfort
+$02 Standby
+$03 Economy
+$04 Building Protection
+</code></pre>
+
+Die Modi AUTO / HEAT / COOL / ECO / OFF entsprechen den Alexa-Befehlen aus dem Theromstatconroller
+siehe Amazon : https://developer.amazon.com/docs/device-apis/alexa-property-schemas.html#thermostatmode
+
+<pre><code>   
+alexa_icon = "THERMOSTAT" = Thermostatcontroller
+
+alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
+</code></pre>
+
+Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
+Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
+Die Abfrage der Ist-Temperatur muss mit der Action  "ReportTemperatur" beim Item der Ist-Temperatur hinterlegt werden.
+
+<pre><code>   
+alexa_actions : "ReportTemperatur"
+</code></pre>
+
+Alexa wie ist die Temperatur in der Küche ?
+
+<pre><code>  
+alexa_actions = "SetTargetTemperature AdjustTargetTemperature" 
+</code></pre>
+
+Hiermit werden die Solltemperatur auf einen Wert gesetzt oder die Temperatur erhöht.
+Diese Actions müssen beim Item des Soll-Wertes des Thermostaten eingetragen werden
+
+Alexa erhöhe die Temperatur in der Küche um zwei Grad
+
+Alexa stelle die Temperatur in der Küche auf zweiundzwanzig Grad
+
+
+alexa_actions = "SetThermostatMode"
+Hier wird das Item des Modus angesteuert. Diese Action muss beim Item des Thermostat-Modes eingetragen werden.
+Falls keine Modes angegeben wurden wird "0:AUTO" als default gesetzt
+
+Alexa stelle den Thermostaten Küchen auf Heizen
+
+
+<pre><code>   
+%YAML 1.1
+---
+EG:
+    name: EG
+    sv_page: cat_seperator
+    Kueche:
+        temperature:
+            name: Raumtemperatur
+            alexa_description : "Küche Thermostat"
+            alexa_name : "Küche Thermostat"
+            alexa_device : thermo_Kueche 
+            alexa_thermo_config : "0:AUTO 1:HEAT 2:OFF 3:ECO 4:ECO"
+            alexa_icon : "THERMOSTAT"
+            actual:
+                type: num
+                sqlite: 'yes'
+                visu: 'yes'
+                knx_dpt: 9
+                initial_value: 21.8
+                alexa_device : thermo_Kueche 
+                alexa_retrievable : True
+                alexa_retrievable : True
+                alexa_actions : "ReportTemperatur"
+                alexa_icon : "TEMPERATURE_SENSOR"
+            SollBasis:
+                type: num
+                visu_acl: rw
+                knx_dpt: 9
+                initial_value: 21.0
+                alexa_device : thermo_Kueche 
+                alexa_actions : "SetTargetTemperature AdjustTargetTemperature"
+            Soll:
+                type: num
+                sqlite: 'yes'
+                visu: 'yes'
+                visu_acl: rw
+                knx_dpt: 9
+                initial_value: 21.0
+                alexa_device : thermo_Kueche 
+            mode:
+                type: num
+                visu_acl: rw
+                knx_dpt: 20
+                initial_value: 1.0
+                alexa_device : thermo_Kueche 
+                alexa_actions : "SetThermostatMode"
+            state:
+                type: bool
+                visu_acl: r
+                sqlite: 'yes'
+                visu: 'yes'
+                knx_dpt: 1
+                cache: true
+                alexa_device : thermo_Kueche 
+</code></pre>
+
+Beispiel für einen MDT-Glastron, der Modus wird auf Objekt 12 in der ETS-Paramtrierung gesendet (Hierzu eine entsprechende 
+Gruppenadresse anlegen)
+
+<pre><code>   
+ temperature:
+            name: Raumtemperatur
+            alexa_description : "Küche Thermostat"
+            alexa_name : "Küche Thermostat"
+            alexa_device : thermo_Kueche 
+            alexa_thermo_config : "0:AUTO 1:HEAT 2:OFF 3:ECO 4:ECO"
+            alexa_icon : "THERMOSTAT"
+        plan:
+            type: num
+            visu_acl: rw
+            database@mysqldb: init
+            knx_dpt: 9
+            knx_send: 2/1/2
+            knx_listen: 2/1/2
+            knx_cache: 2/1/2
+            alexa_device : thermo_Kueche 
+            alexa_actions : "SetTargetTemperature AdjustTargetTemperature"
+        state:
+            type: num
+            visu_acl: r
+            database@mysqldb: init
+            knx_dpt: 9
+            knx_listen: 2/1/1
+            knx_cache: 2/1/1
+            alexa_device : thermo_Kueche 
+            alexa_retrievable : True
+            alexa_retrievable : True
+            alexa_actions : "ReportTemperatur"
+            alexa_icon : "TEMPERATURE_SENSOR"
+        mode:
+            type: num
+            visu_acl: rw
+            knx_dpt: 20
+            initial_value: 1.0
+            alexa_device : thermo_Kueche 
+            alexa_actions : "SetThermostatMode"
+
+        humidity:
+            type: num
+            visu_acl: r
+            database@mysqldb: init
+            knx_dpt: 9
+            knx_listen: 2/1/5
+            knx_cache: 2/1/5
+
+        actor_state:
+            type: num
+            visu_acl: r
+            database@mysqldb: init
+            knx_dpt: '5.001'
+            knx_listen: 2/1/3
+            knx_cache: 2/1/3
+
+</code></pre>
