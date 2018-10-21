@@ -6,6 +6,7 @@ from argparse import Namespace
 
 
 
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import ssl
 import json
@@ -22,15 +23,6 @@ def what_percentage(value, range):
     return ( (value - _min) / (_max - _min) ) * 100
 
 
-
-
-capability_list = {'Alexa.PowerController' : 'powerState',
-                   'Alexa.PowerLevelController' : 'powerLevel',
-                   'Alexa.BrightnessController' :'brightness',
-                   'Alexa.LockController' : 'lockState',
-                   'Alexa.PercentageController': 'percentage'
-                  }
-                  
 
 class AlexaService(object):
     def __init__(self, logger, version, devices, actions, host, port, auth=None, https_certfile=None, https_keyfile=None):
@@ -91,8 +83,21 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                     tokenvalue = self.search(p[i], strsearch)  
                     if not tokenvalue is None:
                         return tokenvalue
-                    
+    
+    def GenerateThermoList(self, myModes, listType):
+            mylist = myModes.split(' ')
+            myValueList = {}
+            myModeList = {}
+            for i in mylist:
+                key=i.split(':')
+                myValueList[key[0]]=key[1]
+                myModeList[key[1]] = key[0]
+            if listType == 1:
+                return myValueList
+            elif listType == 2:
+                return myModeList                    
     def do_POST(self):
+        
         self.logger.debug("{} {} {}".format(self.request_version, self.command, self.path))
         try:
             length = int(self.headers.get('Content-Length'))
@@ -203,21 +208,6 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
     def p3_discover_appliances(self):
         discovered = []
         for device in self.devices.all():
-            # Start - Check Namespaces for Actions
-            myNameSpace = {}
-            myItems = device.backed_items()
-            for Item in myItems:
-                # Get all  Actions for this item
-                action_names = list( map(str.strip, Item.conf['alexa_actions'].split(' ')) )
-                # über alle Actions für dieses item
-                for myActionName in action_names:
-                    myAction = self.actions.by_name(myActionName)
-                    if myAction.namespace not in str(myNameSpace):
-                        myNameSpace[myAction.namespace] = myAction.response_type 
-                for NameSpace in myNameSpace:
-                    print (NameSpace, 'correspondend to ', myNameSpace[NameSpace])
-                # End - Check Namespaces
-            
             mycapabilities = []
 
             newcapa = {"type": "AlexaInterface",
@@ -242,10 +232,27 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                        }
             mycapabilities.append(newcapa)
             
-            if len(myNameSpace) != 0:          
+            # Start - Check Namespaces for Actions
+            myNameSpace = {}
+            myItems = device.backed_items()
+            for Item in myItems:
+                # Get all  Actions for this item
+                action_names = list( map(str.strip, Item.conf['alexa_actions'].split(' ')) )
+                # über alle Actions für dieses item
+                for myActionName in action_names:
+                    myAction = self.actions.by_name(myActionName)
+                    if myAction.namespace not in str(myNameSpace):
+                        myNameSpace[myAction.namespace] = myAction.response_type
+                         
                 for NameSpace in myNameSpace:
                     print (NameSpace, 'correspondend to ', myNameSpace[NameSpace])
-                    
+                # End - Check Namespaces
+            
+            
+            
+            if len(myNameSpace) != 0:          
+                for NameSpace in myNameSpace:
+
                     newcapa = {}
                     newcapa = {
                         "type": "AlexaInterface",
@@ -261,17 +268,38 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                             "retrievable": device.retrievable
                             }
                         }
+                    # Check of special NameSpace
+                    if NameSpace == 'Alexa.ThermostatController':
+                        AlexaItem = self.devices.get(device.id)
+                        myModeList = self.GenerateThermoList(AlexaItem.thermo_config, 2)
+                        myModes = []
+                        for mode in myModeList:
+                            myModes.append(mode)
+                        mysupported = {
+                                      "supportsScheduling": False,
+                                      "supportedModes":
+                                      myModes
+                                      }
+                        newcapa['properties']['configuation'] = mysupported
+                        mysupported=[
+                                     {"name" : 'thermostatMode'},
+                                     {"name" : 'targetSetpoint'}
+                                    ]
+                        newcapa['properties']['supported'] = mysupported
+                                                              
+                                                              
+                        
+                    # End Check special Namespace
                     mycapabilities.append(newcapa)
                 if device.icon == None:
-                    device.icon = "SWITCH"
+                    device.icon = ["SWITCH"]
                 appliance = {
                     "endpointId": device.id,
                     "friendlyName": device.name,
                     "description": "smarthomeNG.alexa-device",
                     "manufacturerName": "smarthomeNG.alexa P3",
-                    "displayCategories": [
-                        device.icon
-                        ],
+                    "displayCategories": 
+                        device.icon,
                     "cookie": {
                         'extraDetail{}'.format(idx+1) : item.id() for idx, item in enumerate(device.backed_items())
                         },
@@ -366,6 +394,27 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                         item_now = Item()
                         myValue = int(what_percentage(item_now, item_range))
                     
+                    elif myAction.namespace == "Alexa.ThermostatController" and myAction.response_type == 'targetSetpoint':
+                        item_now = Item()
+                        myValue = {
+                                    "value": item_now,
+                                    "scale": "CELSIUS"
+                                  }
+                    elif myAction.namespace == "Alexa.ThermostatController" and myAction.response_type == 'thermostatMode':
+                        item_now = Item()
+                        myModes = AlexaItem.thermo_config
+                        myValueList = self.GenerateThermoList(myModes,1)
+                        myIntMode = int(item_now)
+                        myMode = self.search(myValueList, str(myIntMode))
+                        
+                        myValue = myMode
+                        
+                    elif myAction.namespace == 'Alexa.TemperatureSensor':
+                        item_now = Item()
+                        myValue = {
+                                    "value": item_now,
+                                    "scale": "CELSIUS"
+                                  }
                     MyNewProperty = {
                                     "namespace":myAction.namespace,
                                     "name":Propertyname,
@@ -482,3 +531,4 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
             'namespace': namespace,
             'payloadVersion': '2'
         }
+    

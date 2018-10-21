@@ -7,6 +7,8 @@ import os
 import sys
 import uuid
 from datetime import datetime
+from hpmudext import get_device_id
+
 
 
 
@@ -28,21 +30,106 @@ def calc_percentage(percent, range):
 def clamp_percentage(percent, range):
     _min, _max = range
     return min(_max, max(_min, percent))
-    #pydevd.settrace("192.168.178.37", port=5678)
+
+DEFAULT_TEMP_RANGE = (16, 26)
+
+def clamp_temp(temp, range):
+    _min, _max = range
+    return min(_max, max(_min, temp))
+
 
 #======================================================
 # Start - A.Kohler
-#P3 - Directives
+# P3 - Directives
 #======================================================
+# Alexa ThermostatController
+
+@alexa('SetThermostatMode', 'SetThermostatMode', 'thermostatMode','Alexa.ThermostatController',['SetTargetTemperature'])
+def SetThermostatMode(self, directive):
+    # define Mode-Lists
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    
+    AlexaItem = self.devices.get(device_id)
+    myModes = AlexaItem.thermo_config
+    myValueList = self.GenerateThermoList(myModes,1)
+    myModeList = self.GenerateThermoList(myModes,2)
+    
+    # End of Modes-List
+    
+    
+    new_Mode = directive['payload']['thermostatMode']['value'] 
+    
+    
+    
+    item_new = myModeList[new_Mode]
+    for item in items:
+        self.logger.info("Alexa: SetThermostatMode({}, {})".format(item.id(), item_new))
+        item( item_new )
+    
+    #new_temp = items[0]() if items else 0
+    
+    self.response_Value = new_Mode
+    myValue = self.p3_respond(directive)
+    return myValue
+
+@alexa('AdjustTargetTemperature', 'AdjustTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'])
+def AdjustTargetTemperature(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+
+    delta_temp = float( directive['payload']['targetSetpointDelta']['value'] )
+    previous_temp = items[0]() if items else 0
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_TEMP_RANGE)
+        item_new = clamp_temp(previous_temp + delta_temp, item_range)
+        self.logger.info("Alexa: AdjustTargetTemperature({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+
+    new_temp = items[0]() if items else 0
+    
+    self.response_Value = None
+    self.response_Value = {
+                           "value": new_temp,
+                           "scale": "CELSIUS"
+                          }
+    myValue = self.p3_respond(directive)
+    return myValue
+  
+@alexa('SetTargetTemperature', 'SetTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'])
+def SetTargetTemperature(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+
+    target_temp = float( directive['payload']['targetSetpoint']['value'] )
+    previous_temp = items[0]() if items else 0
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_TEMP_RANGE)
+        item_new = clamp_temp(target_temp, item_range)
+        self.logger.info("Alexa: SetTargetTemperature({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+
+    new_temp = items[0]() if items else 0
+    
+    self.response_Value = None
+    self.response_Value = {
+                           "value": new_temp,
+                           "scale": "CELSIUS"
+                          }
+    myValue = self.p3_respond(directive)
+    return myValue
+  
 
 
 # Alexa PowerController
 
-@alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController')
+@alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController',[])
 def TurnOn(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
-    #pydevd.settrace("192.168.178.37", port=5678)
+
     for item in items:
         on, off = self.item_range(item, DEFAULT_RANGE_LOGIC)
         self.logger.info("Alexa: turnOn({}, {})".format(item.id(), on))
@@ -52,7 +139,7 @@ def TurnOn(self, directive):
     myValue = self.p3_respond(directive)
     return myValue
 
-@alexa('TurnOff', 'TurnOff', 'powerState','Alexa.PowerController')
+@alexa('TurnOff', 'TurnOff', 'powerState','Alexa.PowerController',[])
 def TurnOff(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -68,7 +155,7 @@ def TurnOff(self, directive):
 
 # Alexa-Doorlock Controller
 
-@alexa('Lock', 'Lock', 'LockConfirmation','Alexa.LockController')
+@alexa('Lock', 'Lock', 'LockConfirmation','Alexa.LockController',[])
 def Lock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -83,7 +170,7 @@ def Lock(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('Unlock', 'Unlock', 'UnlockConfirmation','Alexa.LockController')
+@alexa('Unlock', 'Unlock', 'UnlockConfirmation','Alexa.LockController',[])
 def Unlock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -101,9 +188,8 @@ def Unlock(self, directive):
 
 # Alexa-Brightness-Controller 
 
-@alexa('AdjustBrightness', 'AdjustBrightness', 'brightness','Alexa.BrightnessController')
+@alexa('AdjustBrightness', 'AdjustBrightness', 'brightness','Alexa.BrightnessController',[])
 def AdjustBrightness(self, directive):
-    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     
@@ -122,9 +208,8 @@ def AdjustBrightness(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('SetBrightness', 'SetBrightness', 'brightness','Alexa.BrightnessController')
+@alexa('SetBrightness', 'SetBrightness', 'brightness','Alexa.BrightnessController',[])
 def SetBrightness(self, directive):
-    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     new_percentage = float( directive['payload']['brightness'] )
@@ -143,9 +228,8 @@ def SetBrightness(self, directive):
 
 # Alexa-Percentage-Controller
 
-@alexa('AdjustPercentage', 'AdjustPercentage', 'percentage','Alexa.PercentageController')
+@alexa('AdjustPercentage', 'AdjustPercentage', 'percentage','Alexa.PercentageController',[])
 def AdjustPercentage(self, directive):
-    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     
@@ -164,9 +248,8 @@ def AdjustPercentage(self, directive):
     
     return self.p3_respond(directive)
     
-@alexa('SetPercentage', 'SetPercentage', 'percentage','Alexa.PercentageController')
+@alexa('SetPercentage', 'SetPercentage', 'percentage','Alexa.PercentageController',[])
 def SetPercentage(self, directive):
-    #pydevd.settrace("192.168.178.37", port=5678)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
     new_percentage = float( directive['payload']['percentage'] )
@@ -181,7 +264,32 @@ def SetPercentage(self, directive):
     
     return self.p3_respond(directive)
 
+# Scene Controller
 
+@alexa('Activate', 'Activate', 'ActivationStarted','Alexa.SceneController',[])
+def Activate(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    new_percentage = float( directive['payload']['percentage'] )
+
+    for item in items:
+        on, off = self.item_range(item, DEFAULT_RANGE_LOGIC)
+        item_new = on                           # Should be the No. of the Scene
+        self.logger.info("Alexa P3: Activate Scene ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+
+#======================================================
+# No directives only Responses for Reportstate
+#======================================================
+@alexa('ReportTemperatur', 'ReportTemperatur', 'temperature','Alexa.TemperatureSensor',[])
+def ReportTemperatur(self, directive):
+    print ("")
 #======================================================
 # Ende - A.Kohler
 #======================================================
+

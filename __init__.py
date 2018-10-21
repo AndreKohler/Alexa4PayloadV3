@@ -24,6 +24,7 @@ import os
 import sys
 
 
+
 from lib.model.smartplugin import SmartPlugin
 import logging
 
@@ -151,15 +152,16 @@ class Alexa4P3(SmartPlugin):
         #===============================================
         #P3 - Properties
         #===============================================
-        if 'alexa_namespace' in item.conf: # only for Version 1.0.0.0.0
-            namespace = item.conf['alexa_namespace']
-            device.namespace = list( map(str.strip, item.conf['alexa_namespace'].split(' ')) )
-            self.logger.debug("Alexa: {}-namespace = {}".format(item.id(), device.namespace))
+        if 'alexa_thermo_config' in item.conf: # only for Version 1.0.0.0.0
+            thermo_config = item.conf['alexa_thermo_config']
+            device.thermo_config =item.conf['alexa_thermo_config']
+            self.logger.debug("Alexa: {}-Thermo-Config = {}".format(item.id(), device.thermo_config))
         # Icon for Alexa-App - default = SWITCH
         if 'alexa_icon' in item.conf:
             icon = item.conf['alexa_icon']
-            device.icon = icon
-            self.logger.debug("Alexa: {}-alexa_icon = {}".format(item.id(), device.icon))
+            if not icon in str(device.icon):
+                device.icon.append(icon)
+                self.logger.debug("Alexa: {}-added alexa_icon = {}".format(item.id(), device.icon))
         # allows to get status of ITEM, default = false
         if 'alexa_retrievable' in item.conf:
             retrievable = item.conf['alexa_retrievable']

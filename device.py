@@ -23,8 +23,8 @@ class AlexaDevice(object):
         self.types = []
         self.alias = []
         #P3 - Properties - A.Kohler
-        self.namespace = []
-        self.icon = None
+        self.thermo_config = '0:AUTO'       # default if nothing is in Config-File
+        self.icon = []
         self.retrievable = False
         self.proactivelyReported = False
 

@@ -4,16 +4,19 @@
 import uuid
 from datetime import datetime
 
+
+import sys
+
 action_func_registry = []
 
 # action-func decorator
-def alexa(action_name, directive_type, response_type, namespace ):
+def alexa(action_name, directive_type, response_type, namespace, properties ):
     def store_metadata(func):
         func.alexa_action_name = action_name
         func.alexa_directive_type = directive_type
         func.alexa_response_type = response_type
         func.alexa_namespace = namespace
-        
+        func.alexa_properties = properties
 
         action_func_registry.append( func )
         return func
@@ -24,10 +27,9 @@ class AlexaActions(object):
     def __init__(self, sh, logger, devices):
         self.actions = {}
         self.actions_by_directive = {}
-
         for func in action_func_registry:
             logger.debug("Alexa: initializing action {}".format(func.alexa_action_name))
-            action = AlexaAction(sh, logger, devices, func, func.alexa_action_name, func.alexa_directive_type, func.alexa_response_type,func.alexa_namespace)
+            action = AlexaAction(sh, logger, devices, func, func.alexa_action_name, func.alexa_directive_type, func.alexa_response_type,func.alexa_namespace, func.alexa_properties)
             self.actions[action.name] = action
             self.actions_by_directive[action.directive_type] = action
 
@@ -40,7 +42,7 @@ class AlexaActions(object):
     
 
 class AlexaAction(object):
-    def __init__(self, sh, logger, devices, func, action_name, directive_type, response_type, namespace):
+    def __init__(self, sh, logger, devices, func, action_name, directive_type, response_type, namespace,properties):
         self.sh = sh
         self.logger = logger
         self.devices = devices
@@ -51,6 +53,7 @@ class AlexaAction(object):
         #P3 Properties
         self.namespace = namespace
         self.response_Value = None
+        self.properties = properties
 
     def __call__(self, payload):
         return self.func(self, payload)
@@ -97,9 +100,63 @@ class AlexaAction(object):
                  return tokenvalue
             else:
                 for i in p:
-                    tokenvalue = self.search(p[i], strsearch)  # in den anderen Elementen weiter suchen
+                    tokenvalue = self.search(p, strsearch)(p[i], strsearch)  # in den anderen Elementen weiter suchen
                     if not tokenvalue is None:
                         return tokenvalue
+    def GenerateThermoList(self, myModes, listType):
+            mylist = myModes.split(' ')
+            myValueList = {}
+            myModeList = {}
+            for i in mylist:
+                key=i.split(':')
+                myValueList[key[0]]=key[1]
+                myModeList[key[1]] = key[0]
+            if listType == 1:
+                return myValueList
+            elif listType == 2:
+                return myModeList
+        
+    def p3_AddDependencies(self, orgDirective, dependency, myEndPointID):
+        now = datetime.now().isoformat()
+        myTimeStamp = now[0:22]+'Z'
+        
+    
+        for addDependencies in dependency:
+            AlexaItem = self.devices.get(myEndPointID)
+            #myItems = AlexaItem.action_items()
+            # walk over all Items examp..: Item: OG.Flur.Spots.dimmen / Item: OG.Flur.Spots
+            for myAction in AlexaItem.action_items:
+                if myAction == addDependencies:        # Action für dieses Device gefunden
+                    myitem = AlexaItem.action_items[myAction][0]
+                    myAddValue = myitem()
+                    myAddName = None
+                    if myAction == 'SetThermostatMode':
+                        myModes = AlexaItem.thermo_config
+                        myValueList = self.GenerateThermoList(myModes,1)
+                        myMode = self.search(myValueList, str(int(myAddValue)))
+                       
+                        myAddName = {
+                                      "namespace": "Alexa.ThermostatController",
+                                      "name": "thermostatMode",
+                                      "value": myMode,
+                                      "timeOfSample": myTimeStamp,
+                                      "uncertaintyInMilliseconds": 5000
+                                    }
+                    elif myAction == 'SetTargetTemperature':
+                        myAddName = {
+                                      "namespace": "Alexa.ThermostatController",
+                                      "name": "targetSetpoint",
+                                      "value": {
+                                        "value": myAddValue,
+                                        "scale": "CELSIUS"
+                                               },
+                                      "timeOfSample": myTimeStamp,
+                                      "uncertaintyInMilliseconds": 5000
+                                    }
+                    if myAddName != None:
+                        orgDirective['context']['properties'].append(myAddName)
+        
+        return orgDirective
     
     def p3_respond(self, Request):
         myEndpoint = self.search(Request,'endpoint')
@@ -133,37 +190,21 @@ class AlexaAction(object):
           "payload": {}
                     }
           }
- 
+        
+        
+        
+        
+        # Check for special needs of dependencies
+        if len(self.properties) != 0:
+            myReponse = self.p3_AddDependencies(myReponse, self.properties,myEndPointID)
+        
+        
+        
+        
+        
         return myReponse 
-    
-def p3_reportstate(self, Request, Properties=[]):
-        myEndpoint = self.search(Request,'endpoint')
-        myScope = self.search(Request,'scope')
-        myEndPointID = self.search(Request,'endpointId')
-        myHeader = self.search(Request,'header')
-        now = datetime.now().isoformat()
-        myTimeStamp = now[0:22]+'Z'
-        self.replace(myHeader,'messageId',uuid.uuid4().hex)
-        self.replace(myHeader,'name','StateReport')
-        self.replace(myHeader,'namespace','Alexa')
-        
-        
-        myReponse = {
-          "context": {
-            "properties": [ Properties ]
-          },
-          "event": {
-              "header": myHeader
-                   ,
-          "endpoint" : {
-                        "scope": myScope,
-                        "endpointId": myEndPointID 
-                       },
-          "payload": {}
-                    }
-          }
- 
-        return myReponse         
+   
+         
 # https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/smart-home-skill-api-reference#error-messages
 def error(self, error_type, payload={}):
         return {
