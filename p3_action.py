@@ -11,8 +11,6 @@ from datetime import datetime
 
 
 
-
-
 from .action import alexa
 
 DEFAULT_RANGE = (0, 100)
@@ -285,8 +283,8 @@ def Activate(self, directive):
 #======================================================
 # No directives only Responses for Reportstate
 #======================================================
-@alexa('ReportTemperatur', 'ReportTemperatur', 'temperature','Alexa.TemperatureSensor',[])
-def ReportTemperatur(self, directive):
+@alexa('ReportTemperature', 'ReportTemperature', 'temperature','Alexa.TemperatureSensor',[])
+def ReportTemperature(self, directive):
     print ("")
 #======================================================
 # Ende - A.Kohler
