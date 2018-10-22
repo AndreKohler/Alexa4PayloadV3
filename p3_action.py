@@ -7,7 +7,6 @@ import os
 import sys
 import uuid
 from datetime import datetime
-from hpmudext import get_device_id
 
 
 
