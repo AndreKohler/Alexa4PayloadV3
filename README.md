@@ -196,10 +196,10 @@ alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
-Die Abfrage der Ist-Temperatur muss mit der Action  "ReportTemperatur" beim Item der Ist-Temperatur hinterlegt werden.
+Die Abfrage der Ist-Temperatur muss mit der Action  "ReportTemperature" beim Item der Ist-Temperatur hinterlegt werden.
 
 <pre><code>   
-alexa_actions : "ReportTemperatur"
+alexa_actions : "ReportTemperature"
 </code></pre>
 
 Alexa wie ist die Temperatur in der Küche ?
@@ -245,8 +245,7 @@ EG:
                 initial_value: 21.8
                 alexa_device : thermo_Kueche 
                 alexa_retrievable : True
-                alexa_retrievable : True
-                alexa_actions : "ReportTemperatur"
+                alexa_actions : "ReportTemperature"
                 alexa_icon : "TEMPERATURE_SENSOR"
             SollBasis:
                 type: num
@@ -310,8 +309,7 @@ Gruppenadresse anlegen)
             knx_cache: 2/1/1
             alexa_device : thermo_Kueche 
             alexa_retrievable : True
-            alexa_retrievable : True
-            alexa_actions : "ReportTemperatur"
+            alexa_actions : "ReportTemperature"
             alexa_icon : "TEMPERATURE_SENSOR"
         mode:
             type: num
