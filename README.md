@@ -42,7 +42,106 @@ Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet w
 
         alexa_icon = "LIGHT"
 
-default = "Switch" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
+
+default = "SWITCH" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ACTIVITY_TRIGGER</td>
+      <td>Describes a combination of devices set to a specific state, when the state change must occur in a specific order. For example, a &quot;watch Netflix&quot; scene might require the: 1. TV to be powered on &amp; 2. Input set to HDMI1.</td>
+      <td>Applies to Scenes</td>
+    </tr>
+    <tr>
+      <td>CAMERA</td>
+      <td>Indicates media devices with video or photo capabilities.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>CONTACT_SENSOR</td>
+      <td>Indicates an endpoint that detects and reports changes in contact between two surfaces.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>DOOR</td>
+      <td>Indicates a door.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>DOORBELL</td>
+      <td>Indicates a doorbell.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>LIGHT</td>
+      <td>Indicates light sources or fixtures.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>MICROWAVE</td>
+      <td>Indicates a microwave oven endpoint.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>MOTION_SENSOR</td>
+      <td>Indicates an endpoint that detects and reports movement in an area.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>OTHER</td>
+      <td>An endpoint that cannot be described in one of the other categories.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SCENE_TRIGGER</td>
+      <td>Describes a combination of devices set to a specific state, when the order of the state change is not important. For example a bedtime scene might include turning off lights and lowering the thermostat, but the order is unimportant.</td>
+      <td>Applies to Scenes</td>
+    </tr>
+    <tr>
+      <td>SMARTLOCK</td>
+      <td>Indicates an endpoint that locks.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SMARTPLUG</td>
+      <td>Indicates modules that are plugged into an existing electrical outlet.</td>
+      <td>Can control a variety of devices.</td>
+    </tr>
+    <tr>
+      <td>SPEAKER</td>
+      <td>Indicates the endpoint is a speaker or speaker system.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SWITCH</td>
+      <td>Indicates in-wall switches wired to the electrical system.</td>
+      <td>Can control a variety of devices.</td>
+    </tr>
+    <tr>
+      <td>TEMPERATURE_SENSOR</td>
+      <td>Indicates endpoints that report the temperature only.</td>
+      <td>The endpoint's temperature data is not shown in the Alexa app.</td>
+    </tr>
+    <tr>
+      <td>THERMOSTAT</td>
+      <td>Indicates endpoints that control temperature, stand-alone air conditioners, or heaters with direct temperature control.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>TV</td>
+      <td>Indicates the endpoint is a television.</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
 
 Optional kann im Item angegeben werden ob es durch Amazon abgefragt werden kann :
 <pre><code>    
