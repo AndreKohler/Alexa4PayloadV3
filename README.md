@@ -4,7 +4,7 @@ Alexa4PayloadV3
 [TOC]
 
 
-##Generell
+## Generell
 
 Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
 Die Rechte entsprechend setzen.
@@ -145,7 +145,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-##Entwicklung / Einbau von neuen Fähigkeiten
+## Entwicklung / Einbau von neuen Fähigkeiten
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
