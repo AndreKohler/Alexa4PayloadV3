@@ -64,7 +64,7 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 
-## Icons / Catagories <a name="ccons"/></a>
+## Icons / Catagories <a name="icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
 
         alexa_icon = "LIGHT"
