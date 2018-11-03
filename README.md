@@ -1,10 +1,29 @@
 # Alexa4PayloadV3
-Alexa4PayloadV3
-
-[TOC]
 
 
-## Generell
+
+
+
+
+## Table of Content
+
+1. [Generell](#generell)
+2. [Icon / Display Categories](#Icons)
+3. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
+4. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
+5. [Alexa-PowerController](#PowerController)
+6. [Alexa-BrightnessController](#BrightnessController)
+7. [Alexa-PowerLevelController](#PowerLevelController)
+8. [Alexa-PercentageController](#PercentageController)
+9. [Alexa-LockController](#LockController)
+10. [Alexa-CameraStreamController](#CameraStreamController)
+11. [Alexa-SceneController](#SceneController)
+
+
+
+# --------------------------------------
+
+##Generell <a name="generell"/></a>
 
 Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
 Die Rechte entsprechend setzen.
@@ -45,11 +64,107 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 
-##Icons / Catagories
+##Icons / Catagories<a name="Icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
 
         alexa_icon = "LIGHT"
 
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ACTIVITY_TRIGGER</td>
+      <td>Describes a combination of devices set to a specific state, when the state change must occur in a specific order. For example, a "watch Netflix" scene might require the: 1. TV to be powered on &amp; 2. Input set to HDMI1.</td>
+      <td>Applies to Scenes</td>
+    </tr>
+    <tr>
+      <td>CAMERA</td>
+      <td>Indicates media devices with video or photo capabilities.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>CONTACT_SENSOR</td>
+      <td>Indicates an endpoint that detects and reports changes in contact between two surfaces.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>DOOR</td>
+      <td>Indicates a door.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>DOORBELL</td>
+      <td>Indicates a doorbell.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>LIGHT</td>
+      <td>Indicates light sources or fixtures.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>MICROWAVE</td>
+      <td>Indicates a microwave oven endpoint.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>MOTION_SENSOR</td>
+      <td>Indicates an endpoint that detects and reports movement in an area.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>OTHER</td>
+      <td>An endpoint that cannot be described in one of the other categories.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SCENE_TRIGGER</td>
+      <td>Describes a combination of devices set to a specific state, when the order of the state change is not important. For example a bedtime scene might include turning off lights and lowering the thermostat, but the order is unimportant.</td>
+      <td>Applies to Scenes</td>
+    </tr>
+    <tr>
+      <td>SMARTLOCK</td>
+      <td>Indicates an endpoint that locks.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SMARTPLUG</td>
+      <td>Indicates modules that are plugged into an existing electrical outlet.</td>
+      <td>Can control a variety of devices.</td>
+    </tr>
+    <tr>
+      <td>SPEAKER</td>
+      <td>Indicates the endpoint is a speaker or speaker system.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>SWITCH</td>
+      <td>Indicates in-wall switches wired to the electrical system.</td>
+      <td>Can control a variety of devices.</td>
+    </tr>
+    <tr>
+      <td>TEMPERATURE_SENSOR</td>
+      <td>Indicates endpoints that report the temperature only.</td>
+      <td>The endpoint's temperature data is not shown in the Alexa app.</td>
+    </tr>
+    <tr>
+      <td>THERMOSTAT</td>
+      <td>Indicates endpoints that control temperature, stand-alone air conditioners, or heaters with direct temperature control.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>TV</td>
+      <td>Indicates the endpoint is a television.</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 default = "Switch" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
 
 Optional kann im Item angegeben werden ob es durch Amazon abgefragt werden kann :
@@ -145,7 +260,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-## Entwicklung / Einbau von neuen Fähigkeiten
+##Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
@@ -173,7 +288,7 @@ siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/list-of-interfa
 In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
 (siehe Quellcode)
 
-## Alexa-ThermostatController + Thermosensor
+## Alexa-ThermostatController + Thermosensor <a name="ThermostatController"/></a>
 
 Es kann nun via Alexa die Solltemperatur verändert werden und der Modus des Thermostaten kann umgestellt werden.
 Die Konfiguration der YAML-Datei sieht wie folgt aus
@@ -201,7 +316,7 @@ alexa_icon = "THERMOSTAT" = Thermostatcontroller
 alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 </code></pre>
 
-###Thermostatsensor
+###Thermostatsensor<a name="Thermostatsensor"/></a>
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
@@ -226,7 +341,7 @@ Alexa erhöhe die Temperatur in der Küche um zwei Grad
 
 Alexa stelle die Temperatur in der Küche auf zweiundzwanzig Grad
 
-###Thermostatmode
+###Thermostatmode<a name="Thermostatmode"/></a>
 
 alexa_actions = "SetThermostatMode"
 
@@ -350,7 +465,7 @@ Gruppenadresse anlegen)
 
 </code></pre>
 
-## Alexa-PowerController
+## Alexa-PowerController<a name="PowerController"/></a>
 
 Alexa schalte das Licht im Flur OG ein
 
@@ -378,7 +493,7 @@ Beispiel
         enforce_updates = true
 </code></pre>
 
-## Alexa-BrightnessController
+## Alexa-BrightnessController<a name="BrightnessController"/></a>
 Alexa stelle das Licht am Esstisch auf fünfzig Prozent
 Alexa dimme das Licht am Esstisch um zehn Prozent
 Folgende Parameter sind anzugeben :
@@ -419,15 +534,15 @@ Beispiel :
         enforce_updates = true
 </code></pre>
 
-## Alexa-PowerLevelController
+## Alexa-PowerLevelController<a name="PowerLevelController"/></a>
 tbd
-## Alexa-PercentageController
+## Alexa-PercentageController<a name="PercentageController"/></a>
 tbd
-## Alexa-LockController
+## Alexa-LockController<a name="LockController"/></a>
 tbd
-## Alexa-CameraStreamContoller
+## Alexa-CameraStreamContoller<a name="CameraStreamContoller"/></a>
 tbd
-## Alexa-SceneController
+## Alexa-SceneController<a name="SceneController"/></a>
 
 Alexa aktiviere Szene kommen
 
