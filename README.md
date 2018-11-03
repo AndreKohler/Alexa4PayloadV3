@@ -10,14 +10,14 @@
 1. [Generell](#generell)
 2. [Icon / Display Categories](#icons)
 3. [Entwicklung / Einbau von neuen Skills](#entwicklung)
-4. [Alexa-ThermostatController](#thermostatController) + [Thermosensor](#thermostatsensor)
-5. [Alexa-PowerController](#PowerController)
-6. [Alexa-BrightnessController](#BrightnessController)
-7. [Alexa-PowerLevelController](#PowerLevelController)
-8. [Alexa-PercentageController](#PercentageController)
-9. [Alexa-LockController](#LockController)
-10. [Alexa-CameraStreamController](#CameraStreamController)
-11. [Alexa-SceneController](#SceneController)
+4. [Alexa-ThermostatController](#thermostatcontroller) + [Thermosensor](#thermostatsensor)
+5. [Alexa-PowerController](#powercontroller)
+6. [Alexa-BrightnessController](#brightnesscontroller)
+7. [Alexa-PowerLevelController](#powerlevelcontroller)
+8. [Alexa-PercentageController](#percentagecontroller)
+9. [Alexa-LockController](#lockcontroller)
+10. [Alexa-CameraStreamController](#camerastreamcontroller)
+11. [Alexa-SceneController](#scenecontroller)
 
 
 
@@ -288,7 +288,7 @@ siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/list-of-interfa
 In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
 (siehe Quellcode)
 
-## Alexa-ThermostatController + Thermosensor <a name="thermostatController"/></a>
+## Alexa-ThermostatController + Thermosensor <a name="thermostatcontroller"/></a>
 
 Es kann nun via Alexa die Solltemperatur verändert werden und der Modus des Thermostaten kann umgestellt werden.
 Die Konfiguration der YAML-Datei sieht wie folgt aus
@@ -316,7 +316,7 @@ alexa_icon = "THERMOSTAT" = Thermostatcontroller
 alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 </code></pre>
 
-###Thermostatsensor<a name="thermostatsensor"/></a>
+### Thermostatsensor<a name="thermostatsensor"/></a>
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
@@ -328,7 +328,7 @@ alexa_actions : "ReportTemperature"
 
 Alexa wie ist die Temperatur in der Küche ?
 
-###Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
+### Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
 
 <pre><code>
 alexa_actions = "SetTargetTemperature AdjustTargetTemperature"
@@ -341,7 +341,7 @@ Alexa erhöhe die Temperatur in der Küche um zwei Grad
 
 Alexa stelle die Temperatur in der Küche auf zweiundzwanzig Grad
 
-###Thermostatmode<a name="Thermostatmode"/></a>
+### Thermostatmode<a name="Thermostatmode"/></a>
 
 alexa_actions = "SetThermostatMode"
 
@@ -465,7 +465,7 @@ Gruppenadresse anlegen)
 
 </code></pre>
 
-## Alexa-PowerController<a name="PowerController"/></a>
+## Alexa-PowerController<a name="powercontroller"/></a>
 
 Alexa schalte das Licht im Flur OG ein
 
@@ -493,7 +493,7 @@ Beispiel
         enforce_updates = true
 </code></pre>
 
-## Alexa-BrightnessController<a name="BrightnessController"/></a>
+## Alexa-BrightnessController<a name="brightnesscontroller"/></a>
 Alexa stelle das Licht am Esstisch auf fünfzig Prozent
 Alexa dimme das Licht am Esstisch um zehn Prozent
 Folgende Parameter sind anzugeben :
@@ -534,15 +534,15 @@ Beispiel :
         enforce_updates = true
 </code></pre>
 
-## Alexa-PowerLevelController<a name="PowerLevelController"/></a>
+## Alexa-PowerLevelController<a name="powerlevelcontroller"/></a>
 tbd
-## Alexa-PercentageController<a name="PercentageController"/></a>
+## Alexa-PercentageController<a name="percentagecontroller"/></a>
 tbd
-## Alexa-LockController<a name="LockController"/></a>
+## Alexa-LockController<a name="lockcontroller"/></a>
 tbd
-## Alexa-CameraStreamContoller<a name="CameraStreamContoller"/></a>
+## Alexa-CameraStreamContoller<a name="camerastreamcontoller"/></a>
 tbd
-## Alexa-SceneController<a name="SceneController"/></a>
+## Alexa-SceneController<a name="scenecontroller"/></a>
 
 Alexa aktiviere Szene kommen
 
