@@ -8,8 +8,8 @@
 ## Table of Content
 
 1. [Generell](#generell)
-2. [Icon / Display Categories](#Icons)
-3. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
+2. [Icon / Display Categories](#icons)
+3. [Entwicklung / Einbau von neuen Skills](#entwicklung)
 4. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
 5. [Alexa-PowerController](#PowerController)
 6. [Alexa-BrightnessController](#BrightnessController)
@@ -64,7 +64,7 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 
-## Icons / Catagories<a name="Icons"/></a>
+## Icons / Catagories <a name="ccons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
 
         alexa_icon = "LIGHT"
@@ -260,7 +260,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-## Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
+## Entwicklung / Einbau von neuen Fähigkeiten <a name="entwicklung"/></a>
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
