@@ -10,7 +10,7 @@
 1. [Generell](#generell)
 2. [Icon / Display Categories](#icons)
 3. [Entwicklung / Einbau von neuen Skills](#entwicklung)
-4. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
+4. [Alexa-ThermostatController](#thermostatController) + [Thermosensor](#thermostatsensor)
 5. [Alexa-PowerController](#PowerController)
 6. [Alexa-BrightnessController](#BrightnessController)
 7. [Alexa-PowerLevelController](#PowerLevelController)
@@ -288,7 +288,7 @@ siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/list-of-interfa
 In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
 (siehe Quellcode)
 
-## Alexa-ThermostatController + Thermosensor <a name="ThermostatController"/></a>
+## Alexa-ThermostatController + Thermosensor <a name="thermostatController"/></a>
 
 Es kann nun via Alexa die Solltemperatur verändert werden und der Modus des Thermostaten kann umgestellt werden.
 Die Konfiguration der YAML-Datei sieht wie folgt aus
@@ -316,7 +316,7 @@ alexa_icon = "THERMOSTAT" = Thermostatcontroller
 alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 </code></pre>
 
-###Thermostatsensor<a name="Thermostatsensor"/></a>
+###Thermostatsensor<a name="thermostatsensor"/></a>
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
