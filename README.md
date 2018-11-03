@@ -540,7 +540,7 @@ tbd
 tbd
 ## Alexa-LockController<a name="lockcontroller"/></a>
 tbd
-## Alexa-CameraStreamContoller<a name="camerastreamcontoller"/></a>
+## Alexa-CameraStreamContoller<a name="camerastreamcontroller"/></a>
 tbd
 ## Alexa-SceneController<a name="scenecontroller"/></a>
 
