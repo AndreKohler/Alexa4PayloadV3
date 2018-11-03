@@ -23,7 +23,7 @@
 
 # --------------------------------------
 
-##Generell <a name="generell"/></a>
+## Generell <a name="generell"/></a>
 
 Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
 Die Rechte entsprechend setzen.
@@ -64,7 +64,7 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 
-##Icons / Catagories<a name="Icons"/></a>
+## Icons / Catagories<a name="Icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
 
         alexa_icon = "LIGHT"
@@ -260,7 +260,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-##Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
+## Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
