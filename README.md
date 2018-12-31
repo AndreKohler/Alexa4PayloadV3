@@ -607,7 +607,7 @@ Beispiel Konfiguration im yaml-Format:
 ## Alexa-LockController<a name="LockController"/></a>
 tbd
 ## Alexa-CameraStreamContoller<a name="CameraStreamController"/></a>
-
+## !!!! erst ab Plugin-Version 1.0.0.0.1 oder höher !!!!
 Alexa zeige die Haustür Kamera
 
 Folgende Parameter sind anzugeben (Beispiel im YAML-Format):
