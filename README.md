@@ -606,7 +606,7 @@ Beispiel Konfiguration im yaml-Format:
 
 ## Alexa-LockController<a name="LockController"/></a>
 tbd
-## Alexa-CameraStreamContoller<a name="CameraStreamContoller"/></a>
+## Alexa-CameraStreamContoller<a name="CameraStreamController"/></a>
 
 Alexa zeige die Haustür Kamera
 
@@ -621,9 +621,9 @@ Folgende Parameter sind anzugeben (Beispiel im YAML-Format):
             alexa_icon: CAMERA
             alexa_actions: InitializeCameraStreams
             alexa_camera_imageUri: 'http://192.168.178.9/snapshot/view0.jpg'
-            alexa_csc_uri: '{"Stream1":"rtsp://192.168.178.9","Stream2":"rtsp://192.168.178./2","Stream3:...."}'
+            alexa_csc_uri: '{"Stream1":"192.168.178.9","Stream2":"192.168.178./2","Stream3:...."}'
             alexa_auth_cred: 'USER:PWD'
-	        alexa_stream_1: '{
+            alexa_stream_1: '{
             "protocols":["RTSP"],
             "resolutions":[{"width":1920,"height":1080}],
             "authorizationTypes":["BASIC"],
@@ -657,11 +657,13 @@ Mit dem Eintrag "alexa_camera_imageUri" wird die URL für den eventuell Snapshot
 
 Für die Streams werden folgende Einstellungen untersützt:
 
-protocols    		: RTSP
-resolutions  		: alle die von der Kamera unterstützt werden
-authorizationTypes	: "BASIC", "DIGEST" or "NONE"
+<pre>
+protocols    		  : RTSP
+resolutions  		  : alle die von der Kamera unterstützt werden
+authorizationTypes	 : "BASIC", "DIGEST" or "NONE"
 videoCodecs			: "H264", "MPEG2", "MJPEG", oder "JPG"
 audioCodecs			: "G711", "AAC", or "NONE"
+</pre>
 
 !! alle Einstellungen sind als Array definiert [] !!
 ## Alexa-SceneController<a name="SceneController"/></a>
