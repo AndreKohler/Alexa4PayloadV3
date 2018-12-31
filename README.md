@@ -1,26 +1,25 @@
-
-# Alexa4PayloadV3	:+1:
-
+# Alexa4PayloadV3
 
 ## Table of Content
 
 1. [Generell](#generell)
-2. [Icon / Display Categories](#icons)
-3. [Entwicklung / Einbau von neuen Skills](#entwicklung)
-4. [Alexa-ThermostatController](#thermostatcontroller) + [Thermosensor](#thermostatsensor)
-5. [Alexa-PowerController](#powercontroller)
-6. [Alexa-BrightnessController](#brightnesscontroller)
-7. [Alexa-PowerLevelController](#powerlevelcontroller)
-8. [Alexa-PercentageController](#percentagecontroller)
-9. [Alexa-LockController](#lockcontroller)
-10. [Alexa-CameraStreamController](#camerastreamcontroller)
-11. [Alexa-SceneController](#scenecontroller)
+2. [Change Log](#changelog)
+3. [Icon / Display Categories](#Icons)
+4. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
+5. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
+6. [Alexa-PowerController](#PowerController)
+7. [Alexa-BrightnessController](#BrightnessController)
+8. [Alexa-PowerLevelController](#PowerLevelController)
+9. [Alexa-PercentageController](#PercentageController)
+10. [Alexa-LockController](#LockController)
+11. [Alexa-CameraStreamController](#CameraStreamController)
+12. [Alexa-SceneController](#SceneController)
 
 
 
 # --------------------------------------
 
-## Generell <a name="generell"/></a>
+##Generell <a name="generell"/></a>
 
 Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
 Die Rechte entsprechend setzen.
@@ -60,12 +59,22 @@ PayloadV2 : turnon
 PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
+##Change Log <a name="changelog"/></a>
+###24.12.2018
+- Doku für PercentageController erstellt
+- Bug Fix für fehlerhafte Testfunktionen aus der Lambda
 
-## Icons / Catagories <a name="icons"/></a>
+###12.12.2018
+- Scene Controller eingebaut
+- Doku für Scene Controller erstellt
+- PercentageController eingebaut
+
+##Icons / Catagories<a name="Icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
-
-        alexa_icon = "LIGHT"
-
+<pre><code>
+alexa_icon = "LIGHT"
+</code></pre>
+<pre>
 <table>
   <thead>
     <tr>
@@ -162,6 +171,7 @@ Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet w
     </tr>
   </tbody>
 </table>
+</pre>
 default = "Switch" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
 
 Optional kann im Item angegeben werden ob es durch Amazon abgefragt werden kann :
@@ -257,7 +267,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-## Entwicklung / Einbau von neuen Fähigkeiten <a name="entwicklung"/></a>
+##Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
@@ -285,7 +295,7 @@ siehe Amazon z.B.: https://developer.amazon.com/docs/device-apis/list-of-interfa
 In der "service.py" muss für den ReportState der Rückgabewert für die neue Action hinzugefügt werden.
 (siehe Quellcode)
 
-## Alexa-ThermostatController + Thermosensor <a name="thermostatcontroller"/></a>
+## Alexa-ThermostatController + Thermosensor <a name="ThermostatController"/></a>
 
 Es kann nun via Alexa die Solltemperatur verändert werden und der Modus des Thermostaten kann umgestellt werden.
 Die Konfiguration der YAML-Datei sieht wie folgt aus
@@ -313,7 +323,7 @@ alexa_icon = "THERMOSTAT" = Thermostatcontroller
 alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 </code></pre>
 
-### Thermostatsensor<a name="thermostatsensor"/></a>
+###Thermostatsensor<a name="Thermostatsensor"/></a>
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
@@ -325,7 +335,7 @@ alexa_actions : "ReportTemperature"
 
 Alexa wie ist die Temperatur in der Küche ?
 
-### Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
+###Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
 
 <pre><code>
 alexa_actions = "SetTargetTemperature AdjustTargetTemperature"
@@ -338,7 +348,9 @@ Alexa erhöhe die Temperatur in der Küche um zwei Grad
 
 Alexa stelle die Temperatur in der Küche auf zweiundzwanzig Grad
 
-### Thermostatmode<a name="Thermostatmode"/></a>
+Alexa wie ist die Temperatur in der Küche eingestellt ?
+
+###Thermostatmode<a name="Thermostatmode"/></a>
 
 alexa_actions = "SetThermostatMode"
 
@@ -462,9 +474,9 @@ Gruppenadresse anlegen)
 
 </code></pre>
 
-## Alexa-PowerController<a name="powercontroller"/></a>
+## Alexa-PowerController<a name="PowerController"/></a>
 
-Alexa schalte das Licht im Flur OG ein
+Alexa schalte das Licht im Büro ein
 
 Mit dem PowerController können beliebige Geräte ein und ausgeschalten werden.
 Folgende Paramter sind anzugeben :
@@ -490,7 +502,7 @@ Beispiel
         enforce_updates = true
 </code></pre>
 
-## Alexa-BrightnessController<a name="brightnesscontroller"/></a>
+## Alexa-BrightnessController<a name="BrightnessController"/></a>
 Alexa stelle das Licht am Esstisch auf fünfzig Prozent
 Alexa dimme das Licht am Esstisch um zehn Prozent
 Folgende Parameter sind anzugeben :
@@ -531,22 +543,135 @@ Beispiel :
         enforce_updates = true
 </code></pre>
 
-## Alexa-PowerLevelController<a name="powerlevelcontroller"/></a>
+## Alexa-PowerLevelController<a name="PowerLevelController"/></a>
 tbd
-## Alexa-PercentageController<a name="percentagecontroller"/></a>
+## Alexa-PercentageController<a name="PercentageController"/></a>
+
+Alexa stelle Rolladen Essen West auf achtzig prozent
+
+Mit dem PercentageController können Geräte auf einen bestimmten Prozentwert  gestellt werden. Der PercentageController eignet sich für die Umsetzung von
+Rolladen/Jalousien. 
+
+Folgende Parameter sind anzugeben :
+
+<pre><code>
+    alexa_actions = "SetPercentage AdjustPercentage"
+    alexa_item_range = 0-255
+</code></pre>
+
+In Verbindung mit dem PowerController (TurnOn / TurnOff) kann der Rolladen
+dann mit "Schalte Rolladen Büro EIN" zugefahren werden und mit "Schalte Rolladen Büro AUS" aufgefahren werden.
+(Zwar nicht wirklich schön aber funktioniert)
+
+'enforce_updates' sollte auf true gesetzt sein damit auch auf den Bus gesendet wird wenn keine Änderung des Wertes erfolgt.
+
+Beispiel Konfiguration im yaml-Format:
+<pre><code>
+        Rolladen:
+            alexa_name: Rollladen Büro
+            alexa_device: rolladen_buero
+            alexa_description: Rollladen Büro
+            alexa_icon: SWITCH
+
+            move:
+                type: num
+                alexa_device: rolladen_buero
+                alexa_actions: TurnOn TurnOff
+                alexa_retrievable: 'True'
+                visu_acl: rw
+                knx_dpt: 1
+                knx_send: 3/2/23
+                enforce_updates: 'true'
+
+            stop:
+                type: num
+                visu_acl: rw
+                enforce_updates: 'true'
+                knx_dpt: 1
+                knx_send: 3/1/23
+
+            pos:
+                type: num
+                visu_acl: rw
+                alexa_device: rolladen_buero
+                alexa_actions: SetPercentage AdjustPercentage
+                alexa_item_range: 0-255
+                knx_dpt: 5
+                knx_listen: 3/3/23
+                knx_send: 3/4/23
+                knx_init: 3/3/23
+                enforce_updates: 'true'
+
+</code></pre>
+
+## Alexa-LockController<a name="LockController"/></a>
 tbd
-## Alexa-LockController<a name="lockcontroller"/></a>
-tbd
-## Alexa-CameraStreamContoller<a name="camerastreamcontroller"/></a>
-tbd
-## Alexa-SceneController<a name="scenecontroller"/></a>
+## Alexa-CameraStreamContoller<a name="CameraStreamContoller"/></a>
+
+Alexa zeige die Haustür Kamera
+
+Folgende Parameter sind anzugeben (Beispiel im YAML-Format):
+
+<pre><code>
+        doorcam:
+            name: doorcam
+            alexa_description: Haustürkamera
+            alexa_name: Doorcam
+            alexa_device: doorcam
+            alexa_icon: CAMERA
+            alexa_actions: InitializeCameraStreams
+            alexa_camera_imageUri: 'http://192.168.178.9/snapshot/view0.jpg'
+            alexa_csc_uri: '{"Stream1":"rtsp://192.168.178.9","Stream2":"rtsp://192.168.178./2","Stream3:...."}'
+            alexa_auth_cred: 'USER:PWD'
+	        alexa_stream_1: '{
+            "protocols":["RTSP"],
+            "resolutions":[{"width":1920,"height":1080}],
+            "authorizationTypes":["BASIC"],
+            "videoCodecs":["H264"],
+            "audioCodecs":["G711"]
+            }'
+            alexa_stream_2: '{
+            "protocols":["RTSP"],
+            "resolutions":[{"width":1920,"height":1080}],
+            "authorizationTypes":["NONE"],
+            "videoCodecs":["H264"],
+            "audioCodecs":["AAC"]
+            }'
+            alexa_stream_3: '{.......
+            }'
+</code></pre>
+
+Als Action ist fix "alexa_actions: InitializeCameraStreams" anzugeben.
+Als Icon empfiehlt sich "alexa_icon: CAMERA".
+
+Es können aktuell bis zu drei Streams pro Kamera definiert werden. In <b>"alexa_csc_uri"</b> werden die URL´s der Streams definiert. Die Items <b>"alexa_csc_uri"</b> und <b>"alexa_stream_X"</b> werden beim Laden der Items als Json geladen.
+
+<font size="5">
+<b>!! Unbedingt auf korrekte Struktur im Json-Format achten !!</b>
+Die Kamera URL´s müssen in der gleichen Reihenfolge zu den Streams (<b>alexa_stream_X</b>) sein.
+</font>
+
+Mit dem Eintrag "alexa_auth_cred" werden User und Passwort für den Zugriff auf die Kamera hinterlegt.
+
+Mit dem Eintrag "alexa_camera_imageUri" wird die URL für den eventuell Snapshot der Kamera definiert.
+
+Für die Streams werden folgende Einstellungen untersützt:
+
+protocols    		: RTSP
+resolutions  		: alle die von der Kamera unterstützt werden
+authorizationTypes	: "BASIC", "DIGEST" or "NONE"
+videoCodecs			: "H264", "MPEG2", "MJPEG", oder "JPG"
+audioCodecs			: "G711", "AAC", or "NONE"
+
+!! alle Einstellungen sind als Array definiert [] !!
+## Alexa-SceneController<a name="SceneController"/></a>
 
 Alexa aktiviere Szene kommen
 
 Mit dem Scene-Controller können Szenen aufgerufen werden.
 Folgende Parameter sind anzugeben:
 <pre><code>
-alexa-actions = "Activate"
+alexa_actions = "Activate"
 alexa_item_turn_on = 3
 alexa_icon = "SCENE_TRIGGER"
 </code></pre>
