@@ -7,6 +7,8 @@ from datetime import datetime
 
 import sys
 
+
+
 action_func_registry = []
 
 # action-func decorator
@@ -92,7 +94,7 @@ class AlexaAction(object):
                     if not tokenvalue is None:
                         return tokenvalue
     def replace(self,p, strsearch, newValue):
-        if type(p) is dict:  # im Dictionary nach 'language' suchen
+        if type(p) is dict:  
             if strsearch in p:
                 tokenvalue = p[strsearch]
                 p[strsearch] = newValue
@@ -100,9 +102,10 @@ class AlexaAction(object):
                  return tokenvalue
             else:
                 for i in p:
-                    tokenvalue = self.search(p, strsearch)(p[i], strsearch)  # in den anderen Elementen weiter suchen
+                    tokenvalue = self.replace(p[i], strsearch,newValue)  
                     if not tokenvalue is None:
                         return tokenvalue
+    
     def GenerateThermoList(self, myModes, listType):
             mylist = myModes.split(' ')
             myValueList = {}
@@ -159,6 +162,7 @@ class AlexaAction(object):
         return orgDirective
     
     def p3_respond(self, Request):
+        
         myEndpoint = self.search(Request,'endpoint')
         myScope = self.search(Request,'scope')
         myEndPointID = self.search(Request,'endpointId')
@@ -191,12 +195,42 @@ class AlexaAction(object):
                     }
           }
         
+        # Check for Special Response-Type
+        if self.namespace == 'Alexa.SceneController':
+            
+            self.replace(myReponse,'context',{})
+            self.replace(myReponse,'payload',{
+                                              "cause" : {
+                                                "type" : "VOICE_INTERACTION"
+                                              },
+                                              "timestamp" : myTimeStamp
+                                            })
+            self.replace(myReponse,'namespace',self.namespace)
+            self.replace(myReponse,'name',self.response_type,)
         
-        
+        elif self.namespace == 'Alexa.CameraStreamController':
+            myContext = {
+                            "properties": [
+                                {
+                                    "namespace": "Alexa.EndpointHealth",
+                                    "name": "connectivity",
+                                    "value": {
+                                        "value": "OK"
+                                    },
+                                    "timeOfSample": myTimeStamp,
+                                    "uncertaintyInMilliseconds": 200
+                                }
+                            ]
+                    }
+            self.replace(myReponse,'namespace',self.namespace)
+            self.replace(myReponse,'context',myContext)
+            self.replace(myReponse,'payload',self.response_Value)
         
         # Check for special needs of dependencies
         if len(self.properties) != 0:
             myReponse = self.p3_AddDependencies(myReponse, self.properties,myEndPointID)
+        
+        
         
         
         

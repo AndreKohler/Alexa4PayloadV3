@@ -60,6 +60,14 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 ##Change Log <a name="changelog"/></a>
+###31.12.2018
+- Version auf 1.0.0.1 erhöht
+- CameraStreamController eingebaut
+- Dokumentation für CameraStreamController ergänzt
+- PowerLevelController eingebaut
+- Dokumentation für PowerLevelController ergänzt
+- Debugs und Testfunktionen kontrolliert und für Upload entfernt
+
 ###24.12.2018
 - Doku für PercentageController erstellt
 - Bug Fix für fehlerhafte Testfunktionen aus der Lambda
@@ -544,10 +552,25 @@ Beispiel :
 </code></pre>
 
 ## Alexa-PowerLevelController<a name="PowerLevelController"/></a>
-tbd
+## !!!! erst ab Plugin-Version 1.0.0.0.1 oder höher !!!!
+
+Alexa stelle Energie Licht Küche auf achtzig
+Alexa erhöhe Energie Licht Küche um zehn
+
+Es können Werte von 0-100 angesagt werden.
+
+Der PowerLevelController kann in Verbindung mit dem PowerController verwendet werden. Funktionsweise entspricht der von PercentageController und BrightnessController
+
+Folgende Parameter sind anzugeben :
+
+<pre><code>
+    alexa_actions = "SetPowerLevel AdjustPowerLevel"
+    alexa_item_range = 0-255
+</code></pre>
+
 ## Alexa-PercentageController<a name="PercentageController"/></a>
 
-Alexa stelle Rolladen Essen West auf achtzig prozent
+Alexa stelle Rolladen Essen West auf achtzig Prozent
 
 Mit dem PercentageController können Geräte auf einen bestimmten Prozentwert  gestellt werden. Der PercentageController eignet sich für die Umsetzung von
 Rolladen/Jalousien. 
@@ -605,10 +628,15 @@ Beispiel Konfiguration im yaml-Format:
 </code></pre>
 
 ## Alexa-LockController<a name="LockController"/></a>
-tbd
+## !!!! erst ab Plugin-Version 1.0.0.0.2 oder höher !!!!
+Es gibt aktuell Probleme in der Amazon-Cloud mit dem LockController.
+Weiterentwicklung zurückgestellt.
+
 ## Alexa-CameraStreamContoller<a name="CameraStreamController"/></a>
 ## !!!! erst ab Plugin-Version 1.0.0.0.1 oder höher !!!!
-Alexa zeige die Haustür Kamera
+
+Alexa zeige die Haustür Kamera. Aus den bereitgestellten Streams wird
+immer der mit der höchsten Auflösung an Alexa übermittelt.
 
 Folgende Parameter sind anzugeben (Beispiel im YAML-Format):
 
@@ -665,7 +693,7 @@ videoCodecs			: "H264", "MPEG2", "MJPEG", oder "JPG"
 audioCodecs			: "G711", "AAC", or "NONE"
 </pre>
 
-!! alle Einstellungen sind als Array definiert [] !!
+<b>!! alle Einstellungen sind als Array definiert [] !!</b>
 ## Alexa-SceneController<a name="SceneController"/></a>
 
 Alexa aktiviere Szene kommen

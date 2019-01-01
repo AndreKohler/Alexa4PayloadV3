@@ -27,6 +27,7 @@ import sys
 
 from lib.model.smartplugin import SmartPlugin
 import logging
+import json
 
 
 from .device import AlexaDevices, AlexaDevice
@@ -37,6 +38,8 @@ from . import actions_turn
 from . import actions_temperature
 from . import actions_percentage
 from . import actions_lock
+# Tools for Payload V3 
+
 from . import p3_action
 
 
@@ -44,7 +47,7 @@ from . import p3_action
 
 
 class Alexa4P3(SmartPlugin):
-    PLUGIN_VERSION = "1.0.0.0.0"
+    PLUGIN_VERSION = "1.0.0.0.1"
     ALLOW_MULTIINSTANCE = False
 
     def __init__(self, sh, service_host='0.0.0.0', service_port=9000, service_https_certfile=None, service_https_keyfile=None):
@@ -72,7 +75,8 @@ class Alexa4P3(SmartPlugin):
         device_id = None
         if 'alexa_device' in item.conf:
             device_id = item.conf['alexa_device']
-        # supported actions/directives
+        
+        #supported actions/directives
         action_names = None
         if 'alexa_actions' in item.conf:
             action_names = list( map(str.strip, item.conf['alexa_actions'].split(' ')) )
@@ -91,7 +95,8 @@ class Alexa4P3(SmartPlugin):
         elif action_names and 'name' in item.conf:
             name = item.conf['name']
             name_is_explicit = False
-
+        
+            
         # deduce device-id from name
         if name and not device_id:
             device_id = AlexaDevice.create_id_from_name(name)
@@ -152,27 +157,63 @@ class Alexa4P3(SmartPlugin):
         #===============================================
         #P3 - Properties
         #===============================================
-        if 'alexa_thermo_config' in item.conf: # only for Version 1.0.0.0.0
+        # ---- Start CamerStreamController
+
+            
+        
+        i=1
+        while i <= 3:
+            myStream='alexa_stream_{}'.format(i)
+            if myStream in item.conf:
+                try:
+                    camera_uri = item.conf[myStream]
+                    camera_uri = json.loads(camera_uri)
+                    device.camera_setting[myStream] =  camera_uri
+                    self.logger.debug("Alexa4P3: {}-added Camera-Streams = {}".format(item.id(), camera_uri))
+                except Exception as e:
+                    self.logger.debug("Alexa4P3: {}-wrong Stream Settings = {}".format(item.id(), camera_uri))
+            i +=1    
+
+        if 'alexa_csc_uri' in item.conf:
+            camera_uri = item.conf['alexa_csc_uri']
+            device.camera_uri = json.loads(camera_uri)
+            self.logger.debug("Alexa4P3: {}-Camera-Uri = {}".format(item.id(), device.camera_uri))
+            pass
+        
+        if 'alexa_auth_cred' in item.conf:
+            alexa_auth_cred = item.conf['alexa_auth_cred']
+            device.alexa_auth_cred = alexa_auth_cred
+            self.logger.debug("Alexa4P3: {}-Camera-Auth = {}".format(item.id(), device.alexa_auth_cred))
+            
+        if 'alexa_camera_imageUri' in item.conf:
+            alexa_camera_imageUri = item.conf['alexa_camera_imageUri']
+            device.camera_imageUri = alexa_camera_imageUri
+            self.logger.debug("Alexa4P3: {}-Camera-Image-Uri = {}".format(item.id(), device.camera_imageUri))
+        # ---- Ende CamerStreamController    
+        
+        
+        
+        if 'alexa_thermo_config' in item.conf:
             thermo_config = item.conf['alexa_thermo_config']
             device.thermo_config =item.conf['alexa_thermo_config']
-            self.logger.debug("Alexa: {}-Thermo-Config = {}".format(item.id(), device.thermo_config))
+            self.logger.debug("Alexa4P3: {}-Thermo-Config = {}".format(item.id(), device.thermo_config))
         # Icon for Alexa-App - default = SWITCH
         if 'alexa_icon' in item.conf:
             icon = item.conf['alexa_icon']
             if not icon in str(device.icon):
                 device.icon.append(icon)
-                self.logger.debug("Alexa: {}-added alexa_icon = {}".format(item.id(), device.icon))
+                self.logger.debug("Alexa4P3: {}-added alexa_icon = {}".format(item.id(), device.icon))
         # allows to get status of ITEM, default = false
         if 'alexa_retrievable' in item.conf:
             retrievable = item.conf['alexa_retrievable']
             device.retrievable = retrievable
-            self.logger.debug("Alexa: {}-alexa_retrievable = {}".format(item.id(), device.retrievable))
+            self.logger.debug("Alexa4P3: {}-alexa_retrievable = {}".format(item.id(), device.retrievable))
         
         
         if 'alexa_proactivelyReported' in item.conf:
             proactivelyReported = item.conf['alexa_proactivelyReported']
             device.proactivelyReported = proactivelyReported
-            self.logger.debug("Alexa: {}-alexa_proactivelyReported = {}".format(item.id(), device.proactivelyReported))
+            self.logger.debug("Alexa4P3: {}-alexa_proactivelyReported = {}".format(item.id(), device.proactivelyReported))
         
             
         # register item-actions with the device

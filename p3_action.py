@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 
-
+from . import p3_tools as p3tools
 from .action import alexa
 
 DEFAULT_RANGE = (0, 100)
@@ -152,7 +152,7 @@ def TurnOff(self, directive):
 
 # Alexa-Doorlock Controller
 
-@alexa('Lock', 'Lock', 'LockConfirmation','Alexa.LockController',[])
+@alexa('Lock', 'Lock', 'lockState','Alexa.LockController',[])
 def Lock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -167,7 +167,7 @@ def Lock(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('Unlock', 'Unlock', 'UnlockConfirmation','Alexa.LockController',[])
+@alexa('Unlock', 'Unlock', 'lockState','Alexa.LockController',[])
 def Unlock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -241,7 +241,7 @@ def AdjustPercentage(self, directive):
         self.logger.info("Alexa P3: AdjustPercentage({}, {:.1f})".format(item.id(), item_new))
         item( item_new )
         self.response_Value = None
-        self.response_Value = int(new_percentage)
+        self.response_Value = int(percentage_new)
     
     return self.p3_respond(directive)
     
@@ -261,13 +261,53 @@ def SetPercentage(self, directive):
     
     return self.p3_respond(directive)
 
+
+# Alexa.PowerLevelController
+
+@alexa('AdjustPowerLevel', 'AdjustPowerLevel', 'powerLevel','Alexa.PowerLevelController',[])
+def AdjustPowerLevel(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    
+    percentage_delta = float( directive['payload']['powerLevelDelta'] )
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_RANGE)
+        item_now = item()
+        percentage_now = what_percentage(item_now, item_range)
+        percentage_new = clamp_percentage(percentage_now + percentage_delta, item_range)
+        item_new = calc_percentage(percentage_new, item_range)
+        self.logger.info("Alexa P3: AdjustPowerLevel({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = int(percentage_new)
+    
+    return self.p3_respond(directive)
+
+@alexa('SetPowerLevel', 'SetPowerLevel', 'powerLevel','Alexa.PowerLevelController',[])
+def SetPowerLevel(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    new_percentage = float( directive['payload']['powerLevel'] )
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_RANGE)
+        item_new = calc_percentage(new_percentage, item_range)
+        self.logger.info("Alexa P3: SetPowerLevel({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = int(new_percentage)
+    
+    return self.p3_respond(directive)
+
+
 # Scene Controller
 
 @alexa('Activate', 'Activate', 'ActivationStarted','Alexa.SceneController',[])
 def Activate(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
-    new_percentage = float( directive['payload']['percentage'] )
+
 
     for item in items:
         on, off = self.item_range(item, DEFAULT_RANGE_LOGIC)
@@ -279,12 +319,50 @@ def Activate(self, directive):
     
     return self.p3_respond(directive)
 
+# CameraStreamController
+@alexa('InitializeCameraStreams', 'InitializeCameraStreams', 'cameraStreamConfigurations','Alexa.CameraStreamController',[])
+def InitializeCameraStreams(self, directive):
+    
+    p3tools.DumpStreamInfo(directive)
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        self.logger.info("Alexa P3: CameraStream Init ({})".format(item.id()))
+        response_Value = None
+        AlexaItem = self.devices.get(device_id)
+        response_Value = p3tools.CreateStreamPayLoad(AlexaItem)
+        self.response_Value = None
+        self.response_Value = response_Value
+    return self.p3_respond(directive)
+
+# CameraStreamController
+@alexa('AcceptGrant', 'AcceptGrant', 'AcceptGrant.Response','Alexa.Authorization',[])
+def AcceptGrant(self, directive):
+    self.logger.info("Alexa P3: AcceptGrant received ({})")
+    myResponse = {
+                  "event": {
+                    "header": {
+                      "messageId": "",
+                      "namespace": "Alexa.Authorization",
+                      "name": "AcceptGrant.Response",
+                      "payloadVersion": "3"
+                    },
+                    "payload": {
+                    }
+                  }
+                }
+    self.replace(myResponse,'messageId',uuid.uuid4().hex)
+    return myResponse
 
 #======================================================
 # No directives only Responses for Reportstate
 #======================================================
 @alexa('ReportTemperature', 'ReportTemperature', 'temperature','Alexa.TemperatureSensor',[])
 def ReportTemperature(self, directive):
+    print ("")
+
+@alexa('ReportLockState', 'ReportLockState', 'lockstate','Alexa.LockController',[])
+def ReportLockState(self, directive):
     print ("")
 #======================================================
 # Ende - A.Kohler

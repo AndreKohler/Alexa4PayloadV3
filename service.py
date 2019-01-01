@@ -13,6 +13,9 @@ import json
 import uuid
 from datetime import datetime
 
+from . import p3_tools as p3tools
+
+ 
 
 
 DEFAULT_RANGE = (0, 100)
@@ -56,7 +59,12 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
         self.devices = devices
         self.actions = actions
         BaseHTTPRequestHandler.__init__(self, *args)
+    
+    
 
+        
+        
+    
     # find Value for Key in Json-structure
     # needed for Alexa Payload V3
     
@@ -80,7 +88,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                  return tokenvalue
             else:
                 for i in p:
-                    tokenvalue = self.search(p[i], strsearch)  
+                    tokenvalue = self.replace(p[i], strsearch,newValue)  
                     if not tokenvalue is None:
                         return tokenvalue
     
@@ -97,14 +105,13 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
             elif listType == 2:
                 return myModeList                    
     def do_POST(self):
-        
         self.logger.debug("{} {} {}".format(self.request_version, self.command, self.path))
         try:
             length = int(self.headers.get('Content-Length'))
             data = self.rfile.read(length).decode('utf-8')
             req = json.loads(data)
             #======================================
-            # test Payloadversion
+            # Test Payloadversion
             #======================================
             payloadVersion = self.search( req,'payloadVersion')
             #======================================
@@ -140,11 +147,17 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 payload =  self.search( req,'payload')
                 if header['namespace'] == 'Alexa.Discovery':
                     return self.p3_handle_discovery(header, payload)
-                if header['namespace'] == 'Alexa':
+                elif header['namespace'] == 'Alexa':
                     return self.p3_handle_control(header, payload,mydirective)
                 
-                if mydirective != None:
+                elif mydirective != None:
                     return self.p3_handle_control(header, payload,mydirective)
+                else:
+                    msg = "unknown `header.namespace` '{}'".format(header['namespace'])
+                    self.logger.error(msg)
+                    self.send_error(400, explain=msg)
+            else:
+                self.send_error(500,"Request with unknown Payload '{}'".format(payloadVersion))
         except Exception as e:
             self.send_error(500, explain=str(e))
             
@@ -185,6 +198,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
         self.logger.debug("AlexaP3: discovery-directive '{}' received".format(directive))
 
         if directive == 'DiscoverAppliancesRequest':
+            #myResponse = self.discover_appliances()
             self.respond(self.discover_appliances())
         else:
             msg = "unknown `header.name` '{}'".format(directive)
@@ -286,8 +300,24 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                                      {"name" : 'targetSetpoint'}
                                     ]
                         newcapa['properties']['supported'] = mysupported
-                                                              
-                                                              
+                    
+
+                        
+                    if NameSpace == 'Alexa.SceneController':
+                        newcapa={"type": "AlexaInterface",
+                                 "interface": NameSpace,
+                                 "version": "3",
+                                 "supportsDeactivation" : False
+                                }                              
+                    if NameSpace == 'Alexa.CameraStreamController':
+                        AlexaItem = self.devices.get(device.id)
+
+                        myStreams = p3tools.CreateStreamSettings(AlexaItem)
+                        newcapa={"type": "AlexaInterface",
+                                 "interface": NameSpace,
+                                 "version": "3",
+                                 "cameraStreamConfigurations" : myStreams
+                                }                                                         
                         
                     # End Check special Namespace
                     mycapabilities.append(newcapa)
@@ -296,8 +326,8 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 appliance = {
                     "endpointId": device.id,
                     "friendlyName": device.name,
-                    "description": "smarthomeNG.alexa-device",
-                    "manufacturerName": "smarthomeNG.alexa P3",
+                    "description": "SmartHomeNG",
+                    "manufacturerName": "SmarthomeNG",
                     "displayCategories": 
                         device.icon,
                     "cookie": {
@@ -307,6 +337,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                         mycapabilities
                     }
                 discovered.append(appliance)
+        
         return {
             "event": {
             "header": {
@@ -337,8 +368,8 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 'friendlyDescription': device.description,
                 'friendlyName': device.name,
                 'isReachable': True,
-                'manufacturerName': 'smarthomeNG.alexa',
-                'modelName': 'smarthomeNG.alexa-device',
+                'manufacturerName': 'SmartHomeNG',
+                'modelName': 'SmartHomeNG',
                 'version': self.version
             }
             if device.types:
@@ -362,7 +393,8 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
         
         AlexaItem = self.devices.get(device_id)
         myItems = AlexaItem.backed_items()
-        Properties = []  
+        Properties = []
+        myValue = None  
         # walk over all Items examp..: Item: OG.Flur.Spots.dimmen / Item: OG.Flur.Spots
         for Item in myItems:
             # Get all  Actions for this item
@@ -381,11 +413,17 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                             myValue = 'OFF'
                         elif myValue == 1:
                             myValue = 'ON'
+                    
                     elif myAction.namespace == "Alexa.BrightnessController":
                         item_range = Item.alexa_range
                         item_now = Item()
                         myValue = int(what_percentage(item_now, item_range))
-                
+                    
+                    elif myAction.namespace == "Alexa.PowerLevelController":
+                        item_range = Item.alexa_range
+                        item_now = Item()
+                        myValue = int(what_percentage(item_now, item_range))
+                        
                     elif myAction.namespace == "Alexa.LockController":
                         myValue = 'LOCKED' 
                     
@@ -421,7 +459,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                                     "value":myValue,
                                     
                                     "timeOfSample":myTimeStamp,
-                                    "uncertaintyInMilliseconds":1000
+                                    "uncertaintyInMilliseconds":5000
                                     }
                     Properties.append(MyNewProperty)
 
@@ -484,7 +522,6 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 })
                 return
 
- 
         action = self.actions.for_directive(directive)
         if action:
             try:
