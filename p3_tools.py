@@ -11,6 +11,8 @@ from datetime import datetime,timedelta
 from .device import AlexaDevices, AlexaDevice
 import json
 
+sys.path.append('/home/akohler/Eclipse/eclipse/plugins/org.python.pydev.core_6.5.0.201809011628/pysrc')
+import pydevd
 
 def CreateStreamSettings(myItemConf):
     myRetVal = []
@@ -23,7 +25,7 @@ def CreateStreamPayLoad(myItemConf):
     offset = timedelta(seconds=180)
     now = now + offset
     now = now.isoformat()
-    experitationDate = now[0:22]+'Z'
+    expirationDate = now[0:22]+'Z'
     cameraStream = []
     cameraUri = []
  
@@ -52,13 +54,13 @@ def CreateStreamPayLoad(myItemConf):
         
         myStream= {
                      "uri":uri,
-                     "expirationTime":  experitationDate,
+                     "expirationTime":  expirationDate,
                      "idleTimeoutSeconds": 30,
                      "protocol": v['protocols'][0].upper(),
                      "resolution":streamResolution,
-                     "authorizationType": v['authorizationTypes'],
-                     "videoCodec": v['videoCodecs'],
-                     "audioCodec": v['audioCodecs']
+                     "authorizationType": v['authorizationTypes'][0].upper(),
+                     "videoCodec": v['videoCodecs'][0].upper(),
+                     "audioCodec": v['audioCodecs'][0].upper()
                   }
         cameraStream.append(myStream)
         i +=1

@@ -28,9 +28,9 @@ class AlexaDevice(object):
         self.retrievable = False
         self.proactivelyReported = False
         self.camera_setting = {}
-        self.camera_uri = None
-        self.camera_imageUri = None
-        self.alexa_auth_cred = None
+        self.camera_uri = ''
+        self.camera_imageUri = ''
+        self.alexa_auth_cred = ''
 
     @classmethod
     def create_id_from_name(cls, name):
