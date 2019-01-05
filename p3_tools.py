@@ -11,8 +11,7 @@ from datetime import datetime,timedelta
 from .device import AlexaDevices, AlexaDevice
 import json
 
-sys.path.append('/home/akohler/Eclipse/eclipse/plugins/org.python.pydev.core_6.5.0.201809011628/pysrc')
-import pydevd
+
 
 def CreateStreamSettings(myItemConf):
     myRetVal = []
