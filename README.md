@@ -59,7 +59,9 @@ PayloadV2 : turnon
 PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
+
 ##Change Log <a name="changelog"/></a>
+
 ###31.12.2018
 - Version auf 1.0.0.1 erhöht
 - CameraStreamController eingebaut
