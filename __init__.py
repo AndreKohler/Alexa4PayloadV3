@@ -47,7 +47,7 @@ from . import p3_action
 
 
 class Alexa4P3(SmartPlugin):
-    PLUGIN_VERSION = "1.0.0.0.1"
+    PLUGIN_VERSION = "1.0.0.0.2"
     ALLOW_MULTIINSTANCE = False
 
     def __init__(self, sh, service_host='0.0.0.0', service_port=9000, service_https_certfile=None, service_https_keyfile=None):
