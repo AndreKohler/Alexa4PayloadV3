@@ -71,7 +71,7 @@ class Alexa4P3(SmartPlugin):
 
     def parse_item(self, item):
         # device/appliance
-        self.logger.debug('Parse-Item')
+        #self.logger.debug('Parse-Item')
         device_id = None
         if 'alexa_device' in item.conf:
             device_id = item.conf['alexa_device']
@@ -112,7 +112,7 @@ class Alexa4P3(SmartPlugin):
             self.devices.put( AlexaDevice(device_id) )
 
         device = self.devices.get(device_id)
-
+              
         # types
         if 'alexa_types' in item.conf:
             device.types = list( map(str.strip, item.conf['alexa_types'].split(' ')) )
@@ -154,6 +154,14 @@ class Alexa4P3(SmartPlugin):
             turn_off = item.conf['alexa_item_turn_off'] if 'alexa_item_turn_off' in item.conf else False
             item.alexa_range = (turn_on, turn_off)
             self.logger.debug("Alexa: {}-range = {}".format(item.id(), item.alexa_range))
+        
+        # special ColorValue Type for RGB-devices
+        if 'alexa_color_value_type' in item.conf:
+            alexa_color_value_type = item.conf['alexa_color_value_type']
+            device.alexa_color_value_type = alexa_color_value_type
+            self.logger.debug("Alexa4P3: {}-ColorValueType = {}".format(item.id(), device.alexa_color_value_type))
+            
+            
         #===============================================
         #P3 - Properties
         #===============================================
@@ -178,7 +186,7 @@ class Alexa4P3(SmartPlugin):
             camera_uri = item.conf['alexa_csc_uri']
             device.camera_uri = json.loads(camera_uri)
             self.logger.debug("Alexa4P3: {}-Camera-Uri = {}".format(item.id(), device.camera_uri))
-            pass
+            
         
         if 'alexa_auth_cred' in item.conf:
             alexa_auth_cred = item.conf['alexa_auth_cred']
