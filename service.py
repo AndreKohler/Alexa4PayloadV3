@@ -421,7 +421,8 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 # all informations colletec (Namespace, ResponseTyp, .....
                 # check if capabilitie is alredy in
                 self.logger.info("Alexa: ReportState", Item._name)
-                if myAction.namespace not in str(alreadyReportedControllers):
+                if myAction.response_type not in str(alreadyReportedControllers):
+                #if myAction.namespace not in str(alreadyReportedControllers):
                 #if myAction.response_type not in str(Properties):
                     Propertyname = myAction.response_type
                     if myAction.namespace == "Alexa.PowerController":
@@ -541,7 +542,9 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                     
                         
                     Properties.append(MyNewProperty)
-                    alreadyReportedControllers.append(myAction.namespace)
+                    alreadyReportedControllers.append(myAction.response_type)
+                    
+                    #alreadyReportedControllers.append(myAction.namespace)
 
         # Add the EndpointHealth Property
         MyNewProperty ={
