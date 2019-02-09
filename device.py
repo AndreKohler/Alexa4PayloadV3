@@ -31,6 +31,7 @@ class AlexaDevice(object):
         self.camera_uri = ''
         self.camera_imageUri = ''
         self.alexa_auth_cred = ''
+        self.alexa_color_value_type = ''
 
     @classmethod
     def create_id_from_name(cls, name):

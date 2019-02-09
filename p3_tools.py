@@ -1,7 +1,7 @@
 '''
 Created on 29.12.2018
 
-@author: akohler
+@author: andrek
 '''
 import os
 import sys
@@ -11,7 +11,10 @@ from datetime import datetime,timedelta
 from .device import AlexaDevices, AlexaDevice
 import json
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6a762c15dce324e7fddc7057c7afe279d0a7e863
 
 def CreateStreamSettings(myItemConf):
     myRetVal = []
@@ -21,7 +24,7 @@ def CreateStreamSettings(myItemConf):
 
 def CreateStreamPayLoad(myItemConf):
     now = datetime.now()
-    offset = timedelta(seconds=180)
+    offset = timedelta(seconds=86400) # Experition time 24h 
     now = now + offset
     now = now.isoformat()
     expirationDate = now[0:22]+'Z'
@@ -75,4 +78,114 @@ def DumpStreamInfo(directive):
     myFile.write(myString+"\r\n")
     myFile.write("=====================\r\n")
     myFile.close()
-    
+
+
+# Calculating HSV to RGB based on
+# https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+def hsv_to_rgb(h, s, v):
+            if( h=="" ):
+                 h=0
+            if( s=="" ):
+                 s=0
+            if( v=="" ):
+                 v=0
+            if( h<0 ):
+                 h=0
+            if( s<0 ):
+                 s=0
+            if( v<0 ):
+                 v=0
+            if( h>=360 ):
+                 h=359
+            if( s>100 ):
+                 s=100
+            if( v>100 ):
+                 v=100
+            C = v*s
+            hh = h/60
+            X = C*(1-abs(hh%2-1))
+            r = g = b = 0
+            if( hh>=0 and hh<1 ):
+                r = C
+                g = X
+
+            elif( hh>=1 and hh<2 ):
+                r = X
+                g = C
+
+            elif( hh>=2 and hh<3 ):
+                g = C
+                b = X
+
+            elif( hh>=3 and hh<4 ):
+                g = X
+                b = C
+            elif( hh>=4 and hh<5 ):
+                r = X
+                b = C
+            else:
+                r = C
+                b = X
+
+            m = v-C
+            r += m
+            g += m
+            b += m
+            r *= 255.0
+            g *= 255.0
+            b *= 255.0
+            r = round(r)
+            g = round(g)
+            b = round(b)
+            return r,g,b
+def rgb_to_hsv(r, g, b): 
+            if( r=="" ):
+                 r=0
+            if( g=="" ):
+                 g=0
+            if( b=="" ):
+                 b=0
+
+            if( r<0 ):
+                 r=0
+            if( g<0 ):
+                 g=0
+            if( b<0 ):
+                 b=0
+            if( r>255 ):
+                 r=255
+            if( g>255 ):
+                 g=255
+            if( b>255 ):
+                 b=255
+            
+            r/=255.0
+            g/=255.0
+            b/=255.0
+             
+            M = max(r,g,b)
+            m = min(r,g,b)
+            C = M-m
+            if( C==0 ):
+                h=0
+            elif( M==r ):
+                h=((g-b)/C)
+                h=h%6
+            elif( M==g ):
+                h=(b-r)/C+2
+            else:
+                h=(r-g)/C+4
+                h*=60;
+            if( h<0 ):
+                h+=360
+            else:
+                h*=60
+            v = M
+            if( v==0 ):
+                s = 0
+            else:
+                s = C/v
+            h = round(h,0)
+            s = round(s,4)
+            v = round(v,4)
+            return h,s,v
