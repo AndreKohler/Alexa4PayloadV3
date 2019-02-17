@@ -32,6 +32,7 @@ class AlexaDevice(object):
         self.camera_imageUri = ''
         self.alexa_auth_cred = ''
         self.alexa_color_value_type = ''
+        self.proxied_Urls = {}
 
     @classmethod
     def create_id_from_name(cls, name):

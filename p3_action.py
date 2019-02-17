@@ -334,7 +334,7 @@ def Stop(self, directive):
 
 
     for item in items:
-        item_new = 1                           # Should be the No. of the Scene
+        item_new = 1                   
         self.logger.info("Alexa P3: PBC Stop received ({}, {})".format(item.id(), item_new))
         item( item_new )
         self.response_Value = None

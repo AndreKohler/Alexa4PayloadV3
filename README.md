@@ -61,6 +61,10 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 ##Change Log <a name="changelog"/></a>
+###17.02.2019
+- Version erhöht aktuell 1.0.1
+- CameraStreamController Integration für Beta-Tests fertiggestellt
+
 ###26.01.2019
 - ColorController eingebaut
 - Doku für ColorController erstellt

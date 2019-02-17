@@ -11,10 +11,6 @@ from datetime import datetime,timedelta
 from .device import AlexaDevices, AlexaDevice
 import json
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 6a762c15dce324e7fddc7057c7afe279d0a7e863
 
 def CreateStreamSettings(myItemConf):
     myRetVal = []
@@ -30,13 +26,16 @@ def CreateStreamPayLoad(myItemConf):
     expirationDate = now[0:22]+'Z'
     cameraStream = []
     cameraUri = []
- 
     imageuri = myItemConf.camera_imageUri
     if myItemConf.alexa_auth_cred != '':
             imageuri = imageuri.replace("//","//"+myItemConf.alexa_auth_cred+"@")
 
-    for k,v in myItemConf.camera_uri.items():
-        cameraUri.append(v)
+    if len(myItemConf.proxied_Urls) == 0:
+        for k,v in myItemConf.camera_uri.items():
+            cameraUri.append(v)
+    else:
+        for k,v in myItemConf.proxied_Urls.items():
+            cameraUri.append(v)
     
     i=0
     for k,v in myItemConf.camera_setting.items():

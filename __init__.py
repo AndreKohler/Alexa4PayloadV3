@@ -22,6 +22,7 @@
 #########################################################################
 import os
 import sys
+import uuid
 
 
 
@@ -47,7 +48,7 @@ from . import p3_action
 
 
 class Alexa4P3(SmartPlugin):
-    PLUGIN_VERSION = "1.0.0.0.2"
+    PLUGIN_VERSION = "1.0.1"
     ALLOW_MULTIINSTANCE = False
 
     def __init__(self, sh, service_host='0.0.0.0', service_port=9000, service_https_certfile=None, service_https_keyfile=None):
@@ -178,6 +179,13 @@ class Alexa4P3(SmartPlugin):
                     camera_uri = json.loads(camera_uri)
                     device.camera_setting[myStream] =  camera_uri
                     self.logger.debug("Alexa4P3: {}-added Camera-Streams = {}".format(item.id(), camera_uri))
+                    if 'alexa_csc_proxy_uri' in item.conf:
+                        # Create a proxied URL for this Stream
+                        myCam = str(uuid.uuid4().hex)
+                        myProxiedurl ="%s%s%s" % (item.conf['alexa_csc_proxy_uri'], '/',myCam)
+                        device.proxied_Urls['alexa_proxy_url-{}'.format(i)] = myProxiedurl
+                        myNewEntry='alexa_proxy_url-{}'.format(i)
+                        item.conf[myNewEntry]=myProxiedurl
                 except Exception as e:
                     self.logger.debug("Alexa4P3: {}-wrong Stream Settings = {}".format(item.id(), camera_uri))
             i +=1    

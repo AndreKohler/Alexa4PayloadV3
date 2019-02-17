@@ -508,7 +508,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                             try:
                                 myHSB = p3tools.rgb_to_hsv(myValue[0], myValue[1], myValue[2])
                             except Exception as err:
-                                print(er)
+                                print(err)
 
                         myValue ={
                                     "hue": myHSB[0],
