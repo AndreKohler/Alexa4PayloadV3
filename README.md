@@ -20,7 +20,7 @@
 
 # --------------------------------------
 
-##Generell <a name="generell"/></a>
+## Generell <a name="generell"/></a>
 
 Die Daten des Plugin müssen in den Ordner /usr/local/smarthome/plugins/alexa4p3/ (wie gewohnt)
 Die Rechte entsprechend setzen.
@@ -57,26 +57,32 @@ In den Items sind die "neuen" V3 Actions zu definieren :
 Zum Beispiel :
 
 PayloadV2 : turnon
+
 PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
-##Change Log <a name="changelog"/></a>
 
-###20.04.2019
-- Version erhöht aktuell 1.0.2
+## Change Log <a name="changelog"/></a>
+
+### 01.12.2019
+- Web-Interface ergänzt
+- Prüfung auf Verwendung von gemischtem Payload V2/V3
+- Bug-Fix bei falsch definierten Devices - diese werden entfernt und ein Log-Eintrag erfolgt
+
+### 20.04.2019
 - Authentifizierungsdaten (Credentials) für AlexaCamProxy eingebaut
 - Umbennung des Plugin-Pfades auf "alexa4p3" !! Hier die Einträge in der plugin.yaml anpassen.
 
-###17.02.2019
+### 17.02.2019
 - Version erhöht aktuell 1.0.1
 - CameraStreamController Integration für Beta-Tests fertiggestellt
 
-###26.01.2019
+### 26.01.2019
 - ColorController eingebaut
 - Doku für ColorController erstellt
 - Neues Attribut für CameraStreamController (**alexa_csc_proxy_uri**) zum streamen von Kameras in lokalen Netzwerken in Verbindung mit CamProxy4AlexaP3
 
-###19.01.2019
+### 19.01.2019
 - Version auf 1.0.0.2 erhöht
 - ContactSensor Interface eingebaut
 - Doku für ContactSensor Interface ergänzt
@@ -85,7 +91,7 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 - ReportLockState eingebaut
 - Doku für die Erstellung des Alexa-Skill´s auf Amazon als PDF erstellt
 
-###31.12.2018
+### 31.12.2018
 - Version auf 1.0.0.1 erhöht
 - CameraStreamController eingebaut
 - Dokumentation für CameraStreamController ergänzt
@@ -93,16 +99,16 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 - Dokumentation für PowerLevelController ergänzt
 - Debugs und Testfunktionen kontrolliert und für Upload entfernt
 
-###24.12.2018
+### 24.12.2018
 - Doku für PercentageController erstellt
 - Bug Fix für fehlerhafte Testfunktionen aus der Lambda
 
-###12.12.2018
+### 12.12.2018
 - Scene Controller eingebaut
 - Doku für Scene Controller erstellt
 - PercentageController eingebaut
 
-##Icons / Catagories<a name="Icons"/></a>
+## Icons / Catagories<a name="Icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
 <pre><code>
 alexa_icon = "LIGHT"
@@ -300,7 +306,7 @@ OG:
             enforce_updates: 'true'
 </code></pre>
 
-##Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
+## Entwicklung / Einbau von neuen Fähigkeiten <a name="Entwicklung"/></a>
 Um weitere Actions hinzuzufügen muss die Datei p3_actions.py mit den entsprechenden Actions ergänzt werden.
 (wie ursprünglich als selbstregistrierende Funktion)
 
@@ -356,7 +362,7 @@ alexa_icon = "THERMOSTAT" = Thermostatcontroller
 alexa_icon = "TEMPERATURE_SENSOR" = Temperatursensor
 </code></pre>
 
-###Thermostatsensor<a name="Thermostatsensor"/></a>
+### Thermostatsensor<a name="Thermostatsensor"/></a>
 
 Der Temperartursensor wird beim Item der Ist-Temperatur hinterlegt.
 Der Thermostatconroller wird beim Thermostat-Item hinterlegt. An Amazon werden die Icons als Array übertragen.
@@ -368,7 +374,7 @@ alexa_actions : "ReportTemperature"
 
 Alexa wie ist die Temperatur in der Küche ?
 
-###Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
+### Verändern der Temperatur (SetTargetTemperature AdjustTargetTemperature)
 
 <pre><code>
 alexa_actions = "SetTargetTemperature AdjustTargetTemperature"
@@ -383,7 +389,7 @@ Alexa stelle die Temperatur in der Küche auf zweiundzwanzig Grad
 
 Alexa wie ist die Temperatur in der Küche eingestellt ?
 
-###Thermostatmode<a name="Thermostatmode"/></a>
+### Thermostatmode<a name="Thermostatmode"/></a>
 
 alexa_actions = "SetThermostatMode"
 
@@ -784,7 +790,7 @@ Folgende Parameter sind anzugeben :
 
 ##### alexa_camera_imageUri: die URL des Vorschau-Pictures der Kamera
 
-#####alexa_stream_1: Definition für den ersten Stream der Kamara, es werden bis zu 3 Streams unterstützt. Hier müssen die Details zum Stream definiert werden (protocol = rtsp, resolutions = Array mit der Auflösung, authorizationTypes = Autorisierung, videoCodecs = Array der VideoCodes, autoCodecs = Array der Audiocodes)
+##### alexa_stream_1: Definition für den ersten Stream der Kamara, es werden bis zu 3 Streams unterstützt. Hier müssen die Details zum Stream definiert werden (protocol = rtsp, resolutions = Array mit der Auflösung, authorizationTypes = Autorisierung, videoCodecs = Array der VideoCodes, autoCodecs = Array der Audiocodes)
 
 ##### alexa_csc_uri: Auflistung der Stream-URL´s für Stream1: / Stream2: / Stream3
 siehe Tabelle unten für mögliche Werte
@@ -878,7 +884,7 @@ scene:
     alexa_retrievable : false
 </code></pre>
 
-##ContactSensor Interface <a name="ContactSensor"/></a>
+## ContactSensor Interface <a name="ContactSensor"/></a>
 
 Alexa ist das Küchenfenster geschlossen ?
 Alexa ist das Küchenfenster geöffnet ?
@@ -903,7 +909,7 @@ fensterkontakt:
 </code></pre>
 
 
-##ColorController <a name="ColorController"/></a>
+## ColorController <a name="ColorController"/></a>
 
 Alexa, setze Licht Speicher auf rot
 
