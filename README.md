@@ -61,6 +61,12 @@ PayloadV3 : TurnOn
 
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 ##Change Log <a name="changelog"/></a>
+
+###20.04.2019
+- Version erhöht aktuell 1.0.2
+- Authentifizierungsdaten (Credentials) für AlexaCamProxy eingebaut
+- Umbennung des Plugin-Pfades auf "alexa4p3" !! Hier die Einträge in der plugin.yaml anpassen.
+
 ###17.02.2019
 - Version erhöht aktuell 1.0.1
 - CameraStreamController Integration für Beta-Tests fertiggestellt
@@ -571,7 +577,7 @@ Beispiel :
 </code></pre>
 
 ## Alexa-PowerLevelController<a name="PowerLevelController"/></a>
-## !!!! erst ab Plugin-Version 1.0.0.0.1 oder höher !!!!
+## !!!! erst ab Plugin-Version 1.0.1 oder höher !!!!
 
 Alexa stelle Energie Licht Küche auf achtzig
 Alexa erhöhe Energie Licht Küche um zehn
@@ -647,7 +653,7 @@ Beispiel Konfiguration im yaml-Format:
 </code></pre>
 
 ## Alexa-LockController<a name="LockController"/></a>
-## !!!! erst ab Plugin-Version 1.0.0.0.2 oder höher !!!!
+## !!!! erst ab Plugin-Version 1.0.1 oder höher !!!!
 Die Probleme in der Amazon-Cloud mit dem LockController sind behoben.
 
 Die Funktion ist im Moment so realisiert, das bei "Unlock" ein "ON" (=1) auf
@@ -753,7 +759,7 @@ Beispiel mit einem Aktor-Kanal für öffnen, ein Aktor-Kanal für schliessen mit
 </code></pre>
 
 ## Alexa-CameraStreamContoller<a name="CameraStreamController"/></a>
-## !!!! erst ab Plugin-Version 1.0.0.0.1 oder höher !!!!
+## !!!! erst ab Plugin-Version 1.0.1 oder höher !!!!
 
 Alexa zeige die Haustür Kamera.
 
@@ -763,7 +769,7 @@ d.h. :
 - Kamera auf Port 443 erreichbar
 <span style="color:red">
 ##!! für Kameras im lokalen Netzwerk wird gerade noch ein Camera Proxy entwickelt - dieser gibt dann die Möglichkeit auch private Kameras einzubinden !!
-#Look out for : CamProxy4AlexpaP3
+#Look out for : AlexaCamProxy4P3
 
 </span>
 Aus den bereitgestellten Streams wird
@@ -771,12 +777,16 @@ immer der mit der höchsten Auflösung an Alexa übermittelt.
 
 Folgende Parameter sind anzugeben :
 
-#####alexa_csc_proxy_uri <sup><span style="color:blue"> **Update**</sup></span>: URL über DynDNS vergeben um die Kamera mittels CamProxy4AlexaP3 zu streamen
-#####alexa_camera_imageUri: die URL des Vorschau-Pictures der Kamera
+##### alexa_csc_proxy_uri <sup><span style="color:blue"> **Update**</sup></span>: URL über DynDNS vergeben um die Kamera mittels CamProxy4AlexaP3 zu streamen
+
+##### alexa_proxy_credentials <sup><span style="color:blue"> **Update**</sup></span>: Zugangsdaten für den AlexaCamProxy falls dieser mit Authentication "Basic" oder "Digest" parametriert wird. Angabe in der Form "USER":"PWD"
+
+
+##### alexa_camera_imageUri: die URL des Vorschau-Pictures der Kamera
 
 #####alexa_stream_1: Definition für den ersten Stream der Kamara, es werden bis zu 3 Streams unterstützt. Hier müssen die Details zum Stream definiert werden (protocol = rtsp, resolutions = Array mit der Auflösung, authorizationTypes = Autorisierung, videoCodecs = Array der VideoCodes, autoCodecs = Array der Audiocodes)
 
-alexa_csc_uri: Auflistung der Stream-URL´s für Stream1: / Stream2: / Stream3
+##### alexa_csc_uri: Auflistung der Stream-URL´s für Stream1: / Stream2: / Stream3
 siehe Tabelle unten für mögliche Werte
 
 (Beispiel im YAML-Format):
@@ -809,6 +819,7 @@ siehe Tabelle unten für mögliche Werte
             alexa_stream_3: '{.......
             }'
             alexa_csc_proxy_uri: alexatestcam.ddns.de:443
+            alexa_proxy_credentials: user:pwd
 </code></pre>
 
 Als Action ist fix "alexa_actions: InitializeCameraStreams" anzugeben.

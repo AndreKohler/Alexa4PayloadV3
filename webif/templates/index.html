@@ -1,0 +1,415 @@
+<!-- Style definitions       -->
+
+<style>
+.CodeMirror {
+font-family: Arial, monospace;
+font-size: 12px;
+}
+</style>
+
+<!-- Functions in Scripts       -->
+{% extends "base_plugin.html" %}
+
+{% set logo_frame = false %}
+{% set use_bodytabs = true %}
+{% set tabcount = 4 %}
+{% set tab1title = "Alexa-Devices (" ~ item_count ~ ")" %}
+{% set tab2title = '' %}
+{% set tab3title = '' %}
+{% set tab4title = 'Create CamProxy Settings' %}
+
+
+
+{% block headtable %}
+<table class="table table-striped table-hover">
+	<tbody>
+		<tr>
+			<td class="py-1"><strong>Service Port</strong></td>
+			<td align="right" class="py-1">{{ p.service_port }}</td>
+		</tr>
+		<tr>
+			<td class="py-1"><strong>used Actions</strong></td>
+			<td align="right" class="py-1">{{ payload_action }}</td>
+		</tr>
+
+		<tr>
+			<td class="py-1"><strong>Proxy-Credentials</strong></td>
+			<td align="right" class="py-1">{{ proxyCredentials }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock headtable %}
+
+{% block buttons %}
+{% endblock buttons %}
+
+{% set tabcount = 4 %}
+
+{% block bodytab1 %}
+<div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
+        <div class="col-sm-12">
+            <table class="table table-striped table-hover pluginList">
+			    <thead>
+				    <tr>
+                        <th style="width: 200px;"><font size="-1">{{ _('Device-Name') }}</th>
+					    <th style="width: 600px;"><font size="-1">{{ _('implemented Actions') }}</th>
+					    <th style="width: 200px;"><font size="-1">{{ _('linked to Item') }}</th>
+					</tr>
+			    </thead>
+			    <tbody>
+			    {% for item in items %}
+				    <tr>
+
+					    <td class="py-1"><font size="-1">{{ item.AlexaName }}</td>
+					    <td class="py-1"><font size="-1">{{ item.Actions }}</td>
+					    <td class="py-1"><font size="-1">{{ item.Items }}</td>										
+
+				    </tr>
+			    {% endfor %}
+			    </tbody>
+	        </table>
+        </div>
+</div>
+{% endblock bodytab1 %}
+
+{% block bodytab2 %}
+<div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
+	<div class="col-sm-12">
+                        <table class="table table-striped table-hover pluginList">
+			<thead>
+				<tr>
+					<th>{{ _('Alexa-Item') }}</th>
+					<th style="width: 200;">{{ 'Real-URL' }}</th>
+					</tr>
+			</thead>
+			<tbody>
+			{% for item in item_tls %}
+				<tr>
+					<td class="py-1">{{ item.conf['alexa_description'] }}</td>
+					<td class="py-1">{{ item.conf['alexa_csc_uri'] }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		        </table>
+        </div>
+</div>
+{% endblock bodytab2 %}
+
+{% block bodytab3 %}
+<div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
+	<div class="col-sm-12">
+                <div class="row">
+                    <div class="col" style="max-width: 50%;">
+                        <div class="card">
+                            <div class="card-header p-1 shng_heading">
+                                <a class="float-sm-right" href="#" onclick="reloadThreads();" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
+                                <strong>{{ _('Threads existing ...') }}</strong>
+                            </div>
+                            <div class="card-body p-1">
+                                <div class="card-text" style="">
+                                    <div id="cardOverlay" class="cardOverlay">
+                                        <div style="position: relative; top: 45%; left:45%;">
+                                            <span id="reload-element" class="fas fa-sync fa-4x"/>
+                                        </div>
+                                    </div>
+                                    <div id="threads" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
+                                    {{ _('Threads.....') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="max-width: 50%;">
+                        <div class="card" >
+                            <div class="card-header p-1 shng_heading">
+				<table>
+				<tr>
+
+				<strong align="left">{{ _('Thread-Details') }}</strong>
+
+
+
+
+
+                                <a class="float-sm-right" align="right" href="#" onclick="SelectListItem(actThreadName);" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element_details" class="fas fa-sync"></span></a>
+
+                            </tr>
+                            </table>
+			    </div>
+                            <div class="card-body p-1" style="position: relative;">
+                                <div class="card-text" style="">
+                                    <div id="cardOverlay_Details" class="cardOverlay_Details">
+                                        <div style="position: relative; top: 45%; left:45%;">
+                                            <span id="reload-element_details" class="fas fa-sync fa-4x"/>
+                                        </div>
+                                    </div>
+                                    <div id="thread_details" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
+                                    {{ _('Details.....') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+    </div>
+</div>
+
+{% endblock bodytab3 %}
+
+{% block bodytab4 %}
+<div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
+	<div class="col-sm-12">
+
+
+                <table class="table table-striped table-hover">
+			    <thead>
+                    <tr>
+                        <th style="width: 20%;"><font size="+1"><strong>Camera Properties</strong></font></th>
+					    <th style="width: 10%;"><font size="-1"></font></th>
+					    <th style="width: 10%;"><font size="-1"></font></th>
+					    <th style="width: 60%;"><font size="-1"></font></th>
+					</tr>
+			    </thead>
+	                <tbody>
+		                <tr>
+			                <td class="py-1"> <strong>Item-Name :</strong></td>
+			                <td colspan="3" class="py-1"><input style="width: 600px;"  id="Cam_Name" placeholder="doorcam"></td>
+                            <td> </td>
+                            <td> </td>
+		                </tr>
+		                <tr>
+			                <td class="py-1" style="width: 30%;"><strong>Alexa-Name of the Camera :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Name" placeholder="doorcam"></td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+		                <tr>
+			                <td class="py-1" style="width: 30%;"><strong>Alexa-Device of the Camera :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Device" placeholder="doorcam"></td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+		                <tr>
+			                <td class="py-1" style="width: 30%;"><strong>Alexa-Description :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Description" placeholder="doorcam"></td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+		                <tr>
+			                <td style="width: 30%;" class="py-1"><strong>Proxy-URL (https) :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Proxy_Url" placeholder="testcam.dyndns.com"></td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+		                <tr>
+			                <td style="width: 30%;" class="py-1"><strong>Real IP in your LAN :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="real_IP" placeholder="192.168.178.9"></td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Image-URL :</strong></td>
+			                <td class="py-1" colspan=3><input style="width: 600px;" id="Image_Url" placeholder="http://192.168.178.9/snapshot/view0.jpg"></td>
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Credentials :</strong></td>
+			                <td class="py-1" colspan=3>User :    <input id="user" placeholder="user">Password :   <input id="pwd" placeholder="pwd">
+                            </td>
+		                </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-hover">
+			    <thead>
+				    <tr>
+                        <th style="width: 21%;"><font size="+1"><strong>Stream -Properties</strong></th>
+					    <th style="width: 23%;"><font size="-1"></th>
+					    <th style="width: 23%;"><font size="-1"></th>
+					    <th style="width: 23%;"><font size="-1"></th>
+					</tr>
+			    </thead>
+	                <tbody>
+
+                        <tr>
+                          <td></td>
+                          <td style="width: 23%;" class="py-1">
+				            <div class="custom-control custom-checkbox" style =" vertical-align:middle;align:left">
+				                <input type="checkbox" class="custom-control-input" id="enable_stream_1" name="enable_stream_1">
+				                <label class="custom-control-label" for="enable_stream_1">Stream 1</label>
+				            </div>
+                          </td>
+                          <td style="width: 23%;" class="py-1">
+				            <div class="custom-control custom-checkbox" style =" vertical-align:middle;align:left">
+				                <input type="checkbox" class="custom-control-input" id="enable_stream_2" name="enable_stream_2">
+				                <label class="custom-control-label" for="enable_stream_2">Stream 2</label>
+				            </div>
+                          </td>
+                          <td style="width: 23%;" class="py-1">
+				            <div class="custom-control custom-checkbox" style =" vertical-align:middle;align:left">
+				                <input type="checkbox" class="custom-control-input" id="enable_stream_3" name="enable_stream_3">
+				                <label class="custom-control-label" for="enable_stream_3">Stream 3</label>
+				            </div>
+                          </td>
+                        </tr>
+                        <tr>
+			                <td style="width: 30%;" class="py-1"><strong>Resolution of the Stream :</strong></td>
+			                <td style="width: 10%;" class="py-1"><input id="with_1" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_1" placeholder="height"></td>
+			                <td style="width: 10%;" class="py-1"><input id="with_2" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_2" placeholder="height"></td>
+			                <td style="width: 10%;" class="py-1"><input id="with_3" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_3" placeholder="height"></td>
+
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Video-Codec :</strong></td>
+                            <td>
+                                <select name="video_1" id="video_1" style="width:100px">
+                                  <option value="H264">H264</option>
+                                  <option value="MPEG2">MPEG2</option>
+                                  <option value="MJPEG">MJPEG</option>
+                                  <option value="JPG">JPG</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="video_2" id="video_2" style="width:100px">
+                                  <option value="H264">H264</option>
+                                  <option value="MPEG2">MPEG2</option>
+                                  <option value="MJPEG">MJPEG</option>
+                                  <option value="JPG">JPG</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="video_3" id="video_3" style="width:100px">
+                                  <option value="H264">H264</option>
+                                  <option value="MPEG2">MPEG2</option>
+                                  <option value="MJPEG">MJPEG</option>
+                                  <option value="JPG">JPG</option>
+                                </select>
+                            </td>
+
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Audio-Codec :</strong></td>
+                            <td>
+                                <select name="audio_1" id="audio_1" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="G711">G711</option>
+                                  <option value="AAC">AAC</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="audio_2" id="audio_2" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="G711">G711</option>
+                                  <option value="AAC">AAC</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="audio_3" id="audio_3" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="G711">G711</option>
+                                  <option value="AAC">AAC</option>
+                                </select>
+                            </td>
+
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Stream-Protocol :</strong></td>
+                            <td>
+                                <select name="protocol_1" id="protocol_1" style="width:100px">
+                                  <option value="RTSP">RTSP</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="protocol_2" id="protocol_2" style="width:100px">
+                                  <option value="RTSP">RTSP</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="protocol_3" id="protocol_3" style="width:100px">
+                                  <option value="RTSP">RTSP</option>
+                                </select>
+                            </td>
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Authorization Type :</strong></td>
+                            <td>
+                                <select name="authorization_1" id="authorization_1" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="BASIC">BASIC</option>
+                                  <option value="DIGEST">DIGEST</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="authorization_2" id="authorization_2" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="BASIC">BASIC</option>
+                                  <option value="DIGEST">DIGEST</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="authorization_3" id="authorization_3" style="width:100px">
+                                  <option value="NONE">NONE</option>
+                                  <option value="BASIC">BASIC</option>
+                                  <option value="DIGEST">DIGEST</option>
+                                </select>
+                            </td>
+		                </tr>
+
+
+	                </tbody>
+                </table>        
+    </div>
+   	<button id="create_yaml" class="btn btn-shng btn-sm" name="create_yaml" value="on" onclick="CreateYaml()"><i class="fas fa-random"></i>&nbsp;&nbsp;&nbsp;Create YAML-Entry for shNG&nbsp;</button>
+<br>
+<br>
+<div class="container-fluid" style="overflow: none; border-left: 1px solid #ccc;height: 60%">
+    <div style="margin-bottom: 10px;height: 100%">
+
+
+        {% if yaml_result %}<textarea style="height: 100%" autocomplete="off" id="yaml_result" name="yaml_result">{% for line in yaml_result %}{% if not loop.last %}{{ line }}{% else %}{{ line  | replace('\n', '') }}{% endif %}{% endfor %}</textarea>{% else %}{{ _('no data available') }}{% endif %}
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+var yaml_resultCodeMirror = CodeMirror.fromTextArea(document.getElementById("yaml_result"),
+ {
+    lineNumbers: true,
+    readOnly: true,
+    indentUnit: 4,
+    lineSeparator: '\n',
+    mode: 'ttcn',
+    lineWrapping: false,
+    indentWithTabs: false,
+    autoRefresh : true
+});
+
+window.addEventListener("resize", function(){resizeCodeMirror(yaml_result, 10)}, false);
+resizeCodeMirror(yaml_resultCodeMirror, 10);
+yaml_resultCodeMirror.refresh();
+console.log ("refreshed CodeMirrot")
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  var target = $(e.target).attr("href") // activated tab
+  if (target == "#bodytab_4")
+        {
+         yaml_resultCodeMirror.refresh();
+         yaml_resultCodeMirror.refresh();
+        }
+});
+ function resizeCodeMirrors() {
+    if (!myCodeMirrorConf.getOption("fullScreen")) {
+        var browserHeight = $( window ).height();
+        offsetTop = $('.CodeMirror').offset().top;
+        myCodeMirrorConf.getScrollerElement().style.maxHeight = ((-1)*(offsetTop) -1800 + browserHeight)+ 'px';
+        myCodeMirrorConf.refresh();
+    }
+
+ }
+
+ window.addEventListener("resize", resizeCodeMirrors, false);
+ resizeCodeMirrors();
+</script>
+{% endblock bodytab4 %}
+
+<!-- -->

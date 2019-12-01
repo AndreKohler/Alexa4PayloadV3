@@ -1,7 +1,7 @@
 .. index:: Plugins; Alexa4P3 (Unterstützung von Amazon Echo/Alexa Geräten
 .. index:: Alexa
 
-avm
+alexa4p3
 ###
 
 Konfiguration

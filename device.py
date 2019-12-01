@@ -13,6 +13,9 @@ class AlexaDevices(object):
 
     def all(self):
         return list( self.devices.values() )
+    
+    def delete(self,id):
+        del self.devices[id]
 
 class AlexaDevice(object):
     def __init__(self, id):
@@ -33,6 +36,7 @@ class AlexaDevice(object):
         self.alexa_auth_cred = ''
         self.alexa_color_value_type = ''
         self.proxied_Urls = {}
+        self.alexa_proxy_credentials=''
 
     @classmethod
     def create_id_from_name(cls, name):
@@ -86,20 +90,20 @@ class AlexaDevice(object):
     def validate(self, logger):
         if not self.id:
             msg = "Alexa-Device {}: empty identifier".format(self.id)
-            logger.error(msg)
+            logger.warning(msg)
             return False
         elif len(self.id) > 128:
             msg = "Alexa-Device: {}: identifier '{}' too long >128".format(self.id, self.id)
-            logger.error(msg)
+            logger.warning(msg)
             return False
 
         if not self.name:
             msg = "Alexa-Device {}: empty name".format(self.id)
-            logger.error(msg)
+            logger.warning(msg)
             return False
         elif len(self.name) > 128:
             msg = "Alexa-Device: {}: name '{}' too long >128".format(self.id, self.name)
-            logger.error(msg)
+            logger.warning(msg)
             return False
 
         if not self.description:
@@ -107,7 +111,7 @@ class AlexaDevice(object):
             self.description = self.name
         elif len(self.description) > 128:
             msg = "Alexa-Device {}: description '{}' too long >128".format(self.id, self.description)
-            logger.error(msg)
+            logger.warning(msg)
             return False
 
         if not self.action_items:

@@ -43,7 +43,7 @@ def clamp_temp(temp, range):
 #======================================================
 # Alexa ThermostatController
 
-@alexa('SetThermostatMode', 'SetThermostatMode', 'thermostatMode','Alexa.ThermostatController',['SetTargetTemperature'])
+@alexa('SetThermostatMode', 'SetThermostatMode', 'thermostatMode','Alexa.ThermostatController',['SetTargetTemperature'],"3")
 def SetThermostatMode(self, directive):
     # define Mode-Lists
     device_id = directive['endpoint']['endpointId']
@@ -72,7 +72,7 @@ def SetThermostatMode(self, directive):
     myValue = self.p3_respond(directive)
     return myValue
 
-@alexa('AdjustTargetTemperature', 'AdjustTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'])
+@alexa('AdjustTargetTemperature', 'AdjustTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'],"3")
 def AdjustTargetTemperature(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -96,7 +96,7 @@ def AdjustTargetTemperature(self, directive):
     myValue = self.p3_respond(directive)
     return myValue
   
-@alexa('SetTargetTemperature', 'SetTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'])
+@alexa('SetTargetTemperature', 'SetTargetTemperature', 'targetSetpoint','Alexa.ThermostatController',['SetThermostatMode'],"3")
 def SetTargetTemperature(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -124,7 +124,7 @@ def SetTargetTemperature(self, directive):
 
 # Alexa PowerController
 
-@alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController',[])
+@alexa('TurnOn', 'TurnOn', 'powerState','Alexa.PowerController',[],"3")
 def TurnOn(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -138,7 +138,7 @@ def TurnOn(self, directive):
     myValue = self.p3_respond(directive)
     return myValue
 
-@alexa('TurnOff', 'TurnOff', 'powerState','Alexa.PowerController',[])
+@alexa('TurnOff', 'TurnOff', 'powerState','Alexa.PowerController',[],"3")
 def TurnOff(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -154,7 +154,7 @@ def TurnOff(self, directive):
 
 # Alexa-Doorlock Controller
 
-@alexa('Lock', 'Lock', 'lockState','Alexa.LockController',[])
+@alexa('Lock', 'Lock', 'lockState','Alexa.LockController',[],"3")
 def Lock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -169,7 +169,7 @@ def Lock(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('Unlock', 'Unlock', 'lockState','Alexa.LockController',[])
+@alexa('Unlock', 'Unlock', 'lockState','Alexa.LockController',[],"3")
 def Unlock(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -187,7 +187,7 @@ def Unlock(self, directive):
 
 # Alexa-Brightness-Controller 
 
-@alexa('AdjustBrightness', 'AdjustBrightness', 'brightness','Alexa.BrightnessController',[])
+@alexa('AdjustBrightness', 'AdjustBrightness', 'brightness','Alexa.BrightnessController',[],"3")
 def AdjustBrightness(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -207,7 +207,7 @@ def AdjustBrightness(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('SetBrightness', 'SetBrightness', 'brightness','Alexa.BrightnessController',[])
+@alexa('SetBrightness', 'SetBrightness', 'brightness','Alexa.BrightnessController',[],"3")
 def SetBrightness(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -227,7 +227,7 @@ def SetBrightness(self, directive):
 
 # Alexa-Percentage-Controller
 
-@alexa('AdjustPercentage', 'AdjustPercentage', 'percentage','Alexa.PercentageController',[])
+@alexa('AdjustPercentage', 'AdjustPercentage', 'percentage','Alexa.PercentageController',[],"3")
 def AdjustPercentage(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -247,7 +247,7 @@ def AdjustPercentage(self, directive):
     
     return self.p3_respond(directive)
     
-@alexa('SetPercentage', 'SetPercentage', 'percentage','Alexa.PercentageController',[])
+@alexa('SetPercentage', 'SetPercentage', 'percentage','Alexa.PercentageController',[],"3")
 def SetPercentage(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -266,7 +266,7 @@ def SetPercentage(self, directive):
 
 # Alexa.PowerLevelController
 
-@alexa('AdjustPowerLevel', 'AdjustPowerLevel', 'powerLevel','Alexa.PowerLevelController',[])
+@alexa('AdjustPowerLevel', 'AdjustPowerLevel', 'powerLevel','Alexa.PowerLevelController',[],"3")
 def AdjustPowerLevel(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -286,7 +286,7 @@ def AdjustPowerLevel(self, directive):
     
     return self.p3_respond(directive)
 
-@alexa('SetPowerLevel', 'SetPowerLevel', 'powerLevel','Alexa.PowerLevelController',[])
+@alexa('SetPowerLevel', 'SetPowerLevel', 'powerLevel','Alexa.PowerLevelController',[],"3")
 def SetPowerLevel(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -305,7 +305,7 @@ def SetPowerLevel(self, directive):
 
 # Scene Controller
 
-@alexa('Activate', 'Activate', 'ActivationStarted','Alexa.SceneController',[])
+@alexa('Activate', 'Activate', 'ActivationStarted','Alexa.SceneController',[],"3")
 def Activate(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -322,12 +322,12 @@ def Activate(self, directive):
     return self.p3_respond(directive)
 
 
-@alexa('Play', 'Play', '','Alexa.PlaybackController',[])
+@alexa('Play', 'Play', '','Alexa.PlaybackController',[],"3")
 def Play(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
 
-@alexa('Stop', 'Stop', '','Alexa.PlaybackController',[])
+@alexa('Stop', 'Stop', '','Alexa.PlaybackController',[],"3")
 def Stop(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -344,9 +344,8 @@ def Stop(self, directive):
 
 
 # CameraStreamController
-@alexa('InitializeCameraStreams', 'InitializeCameraStreams', 'cameraStreamConfigurations','Alexa.CameraStreamController',[])
+@alexa('InitializeCameraStreams', 'InitializeCameraStreams', 'cameraStreamConfigurations','Alexa.CameraStreamController',[],"3")
 def InitializeCameraStreams(self, directive):
-    
     p3tools.DumpStreamInfo(directive)
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
@@ -360,7 +359,7 @@ def InitializeCameraStreams(self, directive):
     return self.p3_respond(directive)
 
 # Authorization Interface
-@alexa('AcceptGrant', 'AcceptGrant', 'AcceptGrant.Response','Alexa.Authorization',[])
+@alexa('AcceptGrant', 'AcceptGrant', 'AcceptGrant.Response','Alexa.Authorization',[],"3")
 def AcceptGrant(self, directive):
     self.logger.info("Alexa P3: AcceptGrant received ({})")
     myResponse = {
@@ -380,7 +379,7 @@ def AcceptGrant(self, directive):
 
 # Scene Controller
 
-@alexa('SetColor', 'SetColor', 'color','Alexa.ColorController',[])
+@alexa('SetColor', 'SetColor', 'color','Alexa.ColorController',[],"3")
 def SetColor(self, directive):
     new_hue = float( directive['payload']['color']['hue'] )
     new_saturation = float( directive['payload']['color']['saturation'] )
@@ -429,15 +428,15 @@ def SetColor(self, directive):
 #======================================================
 # No directives only Responses for Reportstate
 #======================================================
-@alexa('ReportTemperature', 'ReportTemperature', 'temperature','Alexa.TemperatureSensor',[])
+@alexa('ReportTemperature', 'ReportTemperature', 'temperature','Alexa.TemperatureSensor',[],"3")
 def ReportTemperature(self, directive):
     print ("")
 
-@alexa('ReportLockState', 'ReportLockState', 'lockState','Alexa.LockController',[])
+@alexa('ReportLockState', 'ReportLockState', 'lockState','Alexa.LockController',[],"3")
 def ReportLockState(self, directive):
     print ("")
 
-@alexa('ReportContactState', 'ReportContactState', 'detectionState','Alexa.ContactSensor',[])
+@alexa('ReportContactState', 'ReportContactState', 'detectionState','Alexa.ContactSensor',[],"3")
 def ReportContactState(self, directive):
     print ("")
 #======================================================

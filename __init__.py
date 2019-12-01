@@ -26,7 +26,9 @@ import uuid
 
 
 
-from lib.model.smartplugin import SmartPlugin
+from lib.model.smartplugin import *
+from lib.item import Items
+from lib.shtime import Shtime
 import logging
 import json
 
@@ -47,23 +49,38 @@ from . import p3_action
 
 
 
+
 class Alexa4P3(SmartPlugin):
     PLUGIN_VERSION = "1.0.1"
     ALLOW_MULTIINSTANCE = False
 
-    def __init__(self, sh, service_host='0.0.0.0', service_port=9000, service_https_certfile=None, service_https_keyfile=None):
-        self.logger = logging.getLogger(__name__)
-        self.sh = sh
+    def __init__(self, sh, *args, **kwargs):
+        from bin.smarthome import VERSION
+        if '.'.join(VERSION.split('.', 2)[:2]) <= '1.5':
+            self.logger = logging.getLogger(__name__)
+        
+        self.sh = self.get_sh()
+        self.service_port = self.get_parameter_value('service_port')
+        self.service_https_certfile = None
+        self.service_https_keyfile = None        
+        self.service_host='0.0.0.0'        
+        
         self.devices = AlexaDevices()
         self.actions = AlexaActions(self.sh, self.logger, self.devices)
         self.service = AlexaService(self.logger, self.PLUGIN_VERSION, self.devices, self.actions,
-                                    service_host, int(service_port), service_https_certfile, service_https_keyfile)
+                                    self.service_host, int(self.service_port), self.service_https_certfile, self.service_https_keyfile)
+        self.action_count_v2 = 0
+        self.action_count_v3 = 0
+        
+        self.init_webinterface()
 
     def run(self):
         self.validate_devices()
         self.create_alias_devices()
-        self.service.start()
         self.alive = True
+        self.service.start()
+        
+        
 
     def stop(self):
         self.service.stop()
@@ -86,7 +103,12 @@ class Alexa4P3(SmartPlugin):
                 if action_name and self.actions.by_name(action_name) is None:
                     self.logger.error("Alexa: invalid alexa action '{}' specified in item {}, ignoring item".format(action_name, item.id()))
                     return None
-
+                actAction = self.actions.by_name(action_name)
+                if actAction.payload_version == "3":
+                    self.action_count_v3 += 1
+                else:
+                    self.action_count_v2 += 1
+                    
         # friendly name
         name = None
         name_is_explicit = None
@@ -189,6 +211,11 @@ class Alexa4P3(SmartPlugin):
                 except Exception as e:
                     self.logger.debug("Alexa4P3: {}-wrong Stream Settings = {}".format(item.id(), camera_uri))
             i +=1    
+        
+        if 'alexa_proxy_credentials' in item.conf:
+            alexa_proxy_credentials = item.conf['alexa_proxy_credentials']
+            device.alexa_proxy_credentials = alexa_proxy_credentials
+            self.logger.debug("Alexa4P3: {}-Proxy-Credentials = {}".format(item.id(), device.alexa_proxy_credentials))
 
         if 'alexa_csc_uri' in item.conf:
             camera_uri = item.conf['alexa_csc_uri']
@@ -245,9 +272,10 @@ class Alexa4P3(SmartPlugin):
 
     def validate_devices(self):
         for device in self.devices.all():
-            self.logger.debug("Alexa: validating device {}".format(device.id))
+            self.logger.debug("validating device {}".format(device.id))
             if not device.validate(self.logger):
-                raise ValueError("Alexa: invalid device {}".format(device.id))
+                self.devices.delete(device.id)
+                self.logger.warning("invalid device {} - deleted Device from Plugin".format(device.id))
 
     def create_alias_devices(self):
         for device in self.devices.all():
@@ -257,3 +285,130 @@ class Alexa4P3(SmartPlugin):
                 self.devices.put( alias_device )
 
         self.logger.info("Alexa: providing {} devices".format( len(self.devices.all()) ))
+
+
+    def init_webinterface(self):
+        """"
+        Initialize the web interface for this plugin
+
+        This method is only needed if the plugin is implementing a web interface
+        """
+        try:
+            self.mod_http = Modules.get_instance().get_module(
+                'http')  # try/except to handle running in a core version that does not support modules
+        except:
+            self.mod_http = None
+        if self.mod_http == None:
+            self.logger.error("Not initializing the web interface")
+            return False
+
+        import sys
+        if not "SmartPluginWebIf" in list(sys.modules['lib.model.smartplugin'].__dict__):
+            self.logger.warning("Web interface needs SmartHomeNG v1.5 and up. Not initializing the web interface")
+            return False
+
+        # set application configuration for cherrypy
+        webif_dir = self.path_join(self.get_plugin_dir(), 'webif')
+        config = {
+            '/': {
+                'tools.staticdir.root': webif_dir,
+            },
+            '/static': {
+                'tools.staticdir.on': True,
+                'tools.staticdir.dir': 'static'
+            }
+        }
+
+        # Register the web interface as a cherrypy app
+        self.mod_http.register_webif(WebInterface(webif_dir, self),
+                                     self.get_shortname(),
+                                     config,
+                                     self.get_classname(), self.get_instance_name(),
+                                     description='')
+
+        return True
+
+
+
+# ------------------------------------------
+#    Webinterface of the plugin
+# ------------------------------------------
+
+import cherrypy
+from jinja2 import Environment, FileSystemLoader
+
+
+class WebInterface(SmartPluginWebIf):
+
+    def __init__(self, webif_dir, plugin):
+        """
+        Initialization of instance of class WebInterface
+
+        :param webif_dir: directory where the webinterface of the plugin resides
+        :param plugin: instance of the plugin
+        :type webif_dir: str
+        :type plugin: object
+        """
+        self.logger = logging.getLogger(__name__)
+        self.webif_dir = webif_dir
+        self.plugin = plugin
+        self.tplenv = self.init_template_environment()
+        self.items = Items.get_instance()
+    
+    
+    def get_alexa_items(self):
+        item_count = 0
+        alexa_items = []
+        for device in self.plugin.devices.all():
+            newEntry = {}
+            supported_actions = device.supported_actions()
+            newEntry['AlexaName'] = device.name
+            newEntry['Actions'] = ""
+            for myAction in supported_actions:
+                #==================
+                actAction = self.plugin.actions.by_name(myAction)
+                if actAction.payload_version == "3":
+                    newEntry['Actions'] += '<font color="green">'+myAction +'</font>'+ ' / '
+                else:
+                    newEntry['Actions'] += '<font color="red">'+myAction +'</font>'+ ' / '
+                #==================
+                
+            newEntry['Actions']=newEntry['Actions'][:-2]
+            newEntry['Items'] = ""
+            for action_items in device.action_items:
+                if not str(device.action_items[action_items][0]) in newEntry['Items']:
+                    newEntry['Items'] +=str(device.action_items[action_items][0])+ ' / ' 
+            newEntry['Items']=newEntry['Items'][:-2]
+            alexa_items.append(newEntry)
+            item_count += 1
+        return item_count, alexa_items
+    
+    @cherrypy.expose
+    def index(self, reload=None):
+        """
+        Build index.html for cherrypy
+
+        Render the template and return the html file to be delivered to the browser
+
+        :return: contents of the template after beeing rendered 
+        """
+        tmpl = self.tplenv.get_template('index.html')
+        
+        item_count,alexa_items = self.get_alexa_items()
+        yaml_result = '\r\n'
+
+        payload_action = "used Actions Payload V2 = " + str(self.plugin.action_count_v2) + " / " +"<strong>used Actions Payload V3 = " + str(self.plugin.action_count_v3)+'</strong>'
+        if (self.plugin.action_count_v2 != 0 and self.plugin.action_count_v3 != 0):
+            payload_action = '<font color="red">' + payload_action + '</font>'
+        else:
+            payload_action = '<font color="green">' + payload_action + '</font>'
+         
+        
+        # add values to be passed to the Jinja2 template eg: tmpl.render(p=self.plugin, interface=interface, ...)
+        return tmpl.render(p=self.plugin,
+                           items=sorted(alexa_items, key=lambda k: str.lower(k['AlexaName'])),
+                           item_count=item_count,
+                           yaml_result=yaml_result,
+                           payload_action=payload_action )
+
+
