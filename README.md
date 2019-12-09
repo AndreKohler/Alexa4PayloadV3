@@ -1088,17 +1088,17 @@ Mit diesen Einstellungen kann ein Rolladen wie folgt gesteuert werden :
 
 Alexa,
 
-mach den Rolladen hoch
+mache den Rolladen hoch
 
-mach den Rolladen runter
+mache den Rolladen runter
 
-öffen den Rolladen
+öffne den Rolladen
 
-mach den Rolladen im Büro auf
+mache den Rolladen im Büro auf
  
-schliesse den Rolladen
+schliesse den Rolladen im Büro
 
-mach den Rolladen im Büro zu
+mache den Rolladen im Büro zu
 
 fahre Rolladen Büro auf siebzig Prozent
 
