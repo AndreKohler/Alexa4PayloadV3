@@ -1072,6 +1072,7 @@ Falls ein Weißwert angefordert wird den das jeweilige Gerät nicht darstellen k
 Als Alexa-Actions müssen SetColorTemperature/IncreaseColorTemperature/DecreaseColorTemperature angegeben werden.
 Als Rückgabewert wird das entsprechende Item vom plugin auf den Wert von 0 (warmweiss) bis 255 (kaltweiss) gesetzt.
 
+Hinweis : Alexa unterstützt 1.000 Kelvin - 10.000 Kelvin
 
 <pre><code>
 alexa_item_range: 3000-6500
@@ -1107,7 +1108,7 @@ stoppe Rolladen Büro
 
 
 Es wird zum einen der RangeController mit erweiterten Ausdrücken verwendet zum anderen wird
-der PlaybackController zweckentfremdet für das Stop-Signal
+der PlaybackController zweckentfremdet für das Stop-Signal verwendet.
 
 ### !! Wichtig !!
 
