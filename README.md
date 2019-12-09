@@ -23,6 +23,11 @@
 19.
 20. [Web-Interface](#Web-Interface) <sup><span style="color:red"> **Neu**</sup></span>
 
+
+## [Beispiel-Konfigurationen](#Beispiel) <sup><span style="color:red"> **Neu**</sup></span>
+
+
+- [der fast perfekte Rolladen](#perfect_blind) <sup><span style="color:red"> **Neu**</sup></span>
 # --------------------------------------
 
 ## Generell <a name="generell"/></a>
@@ -1084,15 +1089,22 @@ Mit diesen Einstellungen kann ein Rolladen wie folgt gesteuert werden :
 Alexa,
 
 mach den Rolladen hoch
+
 mach den Rolladen runter
+
 öffen den Rolladen
-mach den Rolladen im Büro auf 
+
+mach den Rolladen im Büro auf
+ 
 schliesse den Rolladen
+
 mach den Rolladen im Büro zu
 
 fahre Rolladen Büro auf siebzig Prozent
 
 stoppe Rolladen Büro
+
+
 
 Es wird zum einen der RangeController mit erweiterten Ausdrücken verwendet zum anderen wird
 der PlaybackController zweckentfremdet für das Stop-Signal
