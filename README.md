@@ -4,19 +4,24 @@
 
 1. [Generell](#generell)
 2. [Change Log](#changelog)
-3. [Icon / Display Categories](#Icons)
+3. [Icon / Display Categories](#Icons)<sup><span style="color:blue"> **Update**</sup></span>
 4. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
 5. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
 6. [Alexa-PowerController](#PowerController)
 7. [Alexa-BrightnessController](#BrightnessController)
 8. [Alexa-PowerLevelController](#PowerLevelController)
 9. [Alexa-PercentageController](#PercentageController)
-10. [Alexa-LockController](#LockController) <sup><span style="color:blue"> **Update**</sup></span>
+10. [Alexa-LockController](#LockController)
 11. [Alexa-CameraStreamController](#CameraStreamController) <sup><span style="color:blue"> **Update**</sup></span>
 12. [Alexa-SceneController](#SceneController)
-13. [Alexa-ContactSensor](#ContactSensor) <sup><span style="color:red"> **Neu**</sup></span>
-14. [Alexa-ColorController](#ColorController) <sup><span style="color:red"> **Neu**</sup></span>
-
+13. [Alexa-ContactSensor](#ContactSensor)
+14. [Alexa-ColorController](#ColorController)
+15. [Alexa-RangeController](#RangeController) <sup><span style="color:red"> **Neu**</sup></span>
+16. [Alexa-ColorTemperaturController](#ColorTemperaturController) <sup><span style="color:red"> **Neu**</sup></span>
+17.
+18.
+19.
+20. [Web-Interface](#Web-Interface) <sup><span style="color:red"> **Neu**</sup></span>
 
 # --------------------------------------
 
@@ -64,10 +69,14 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 
 ## Change Log <a name="changelog"/></a>
 
+### 06.12.2019 - zum Nikolaus :-)
+- RangeController mit global "utterances" für Rolladen realisiert - endlich "Alexa, mach den Rolladen zu/auf - hoch/runter"
+
 ### 01.12.2019
 - Web-Interface ergänzt
 - Prüfung auf Verwendung von gemischtem Payload V2/V3
 - Bug-Fix bei falsch definierten Devices - diese werden entfernt und ein Log-Eintrag erfolgt
+- alexa_description beim Geräte Discovery ergänzt
 
 ### 20.04.2019
 - Authentifizierungsdaten (Credentials) für AlexaCamProxy eingebaut
@@ -115,100 +124,154 @@ alexa_icon = "LIGHT"
 </code></pre>
 <pre>
 <table>
-  <thead>
+<colgroup>
+    <col width="30%">
+    <col width="70%">
+</colgroup>
+<thead>
     <tr>
-      <th>Value</th>
-      <th>Description</th>
-      <th>Notes</th>
+        <th>Value</th>
+        <th>Description</th>
     </tr>
-  </thead>
-  <tbody>
+</thead>
+<tbody>
     <tr>
-      <td>ACTIVITY_TRIGGER</td>
-      <td>Describes a combination of devices set to a specific state, when the state change must occur in a specific order. For example, a "watch Netflix" scene might require the: 1. TV to be powered on &amp; 2. Input set to HDMI1.</td>
-      <td>Applies to Scenes</td>
-    </tr>
-    <tr>
-      <td>CAMERA</td>
-      <td>Indicates media devices with video or photo capabilities.</td>
-      <td>&nbsp;</td>
+        <td>ACTIVITY_TRIGGER</td>
+        <td>A combination of devices set to a specific state.  Use activity triggers for scenes when the state changes must occur in a specific order. For example, for a scene named "watch Netflix" you might power on the TV first, and then set the input to HDMI1.</td>
     </tr>
     <tr>
-      <td>CONTACT_SENSOR</td>
-      <td>Indicates an endpoint that detects and reports changes in contact between two surfaces.</td>
-      <td>&nbsp;</td>
+        <td>CAMERA</td>
+        <td>A media device with video or photo functionality.</td>
     </tr>
     <tr>
-      <td>DOOR</td>
-      <td>Indicates a door.</td>
-      <td>&nbsp;</td>
+        <td>COMPUTER</td>
+        <td>A non-mobile computer, such as a desktop computer.</td>
     </tr>
     <tr>
-      <td>DOORBELL</td>
-      <td>Indicates a doorbell.</td>
-      <td>&nbsp;</td>
+        <td>CONTACT_SENSOR</td>
+        <td>An endpoint that detects and reports changes in contact between two surfaces.</td>
     </tr>
     <tr>
-      <td>LIGHT</td>
-      <td>Indicates light sources or fixtures.</td>
-      <td>&nbsp;</td>
+        <td>DOOR</td>
+        <td>A door.</td>
     </tr>
     <tr>
-      <td>MICROWAVE</td>
-      <td>Indicates a microwave oven endpoint.</td>
-      <td>&nbsp;</td>
+        <td>DOORBELL</td>
+        <td>A doorbell.</td>
     </tr>
     <tr>
-      <td>MOTION_SENSOR</td>
-      <td>Indicates an endpoint that detects and reports movement in an area.</td>
-      <td>&nbsp;</td>
+        <td>EXTERIOR_BLIND</td>
+        <td>A window covering on the outside of a structure.</td>
     </tr>
     <tr>
-      <td>OTHER</td>
-      <td>An endpoint that cannot be described in one of the other categories.</td>
-      <td>&nbsp;</td>
+        <td>FAN</td>
+        <td>A fan.</td>
     </tr>
     <tr>
-      <td>SCENE_TRIGGER</td>
-      <td>Describes a combination of devices set to a specific state, when the order of the state change is not important. For example a bedtime scene might include turning off lights and lowering the thermostat, but the order is unimportant.</td>
-      <td>Applies to Scenes</td>
+        <td>GAME_CONSOLE</td>
+        <td>A game console, such as Microsoft Xbox or Nintendo Switch</td>
     </tr>
     <tr>
-      <td>SMARTLOCK</td>
-      <td>Indicates an endpoint that locks.</td>
-      <td>&nbsp;</td>
+        <td>GARAGE_DOOR</td>
+        <td>A garage door. Garage doors must implement the <a href="../device-apis/alexa-modecontroller.html">ModeController</a> interface to open and close the door.</td>
     </tr>
     <tr>
-      <td>SMARTPLUG</td>
-      <td>Indicates modules that are plugged into an existing electrical outlet.</td>
-      <td>Can control a variety of devices.</td>
+        <td>INTERIOR_BLIND</td>
+        <td>A window covering on the inside of a structure.</td>
     </tr>
     <tr>
-      <td>SPEAKER</td>
-      <td>Indicates the endpoint is a speaker or speaker system.</td>
-      <td>&nbsp;</td>
+        <td>LAPTOP</td>
+        <td>A laptop or other mobile computer.</td>
     </tr>
     <tr>
-      <td>SWITCH</td>
-      <td>Indicates in-wall switches wired to the electrical system.</td>
-      <td>Can control a variety of devices.</td>
+        <td>LIGHT</td>
+        <td>A light source or fixture.</td>
     </tr>
     <tr>
-      <td>TEMPERATURE_SENSOR</td>
-      <td>Indicates endpoints that report the temperature only.</td>
-      <td>The endpoint's temperature data is not shown in the Alexa app.</td>
+        <td>MICROWAVE</td>
+        <td>A microwave oven.</td>
     </tr>
     <tr>
-      <td>THERMOSTAT</td>
-      <td>Indicates endpoints that control temperature, stand-alone air conditioners, or heaters with direct temperature control.</td>
-      <td>&nbsp;</td>
+        <td>MOBILE_PHONE</td>
+        <td>A mobile phone.</td>
     </tr>
     <tr>
-      <td>TV</td>
-      <td>Indicates the endpoint is a television.</td>
-      <td>&nbsp;</td>
+        <td>MOTION_SENSOR</td>
+        <td>An endpoint that detects and reports movement in an area.</td>
     </tr>
-  </tbody>
+    <tr>
+        <td>MUSIC_SYSTEM</td>
+        <td>A network-connected music system.</td>
+    </tr>
+    <tr>
+        <td>NETWORK_HARDWARE</td>
+        <td>A network router.</td>
+    </tr>
+    <tr>
+        <td>OTHER</td>
+        <td>An endpoint that doesn't belong to one of the other categories.</td>
+    </tr>
+    <tr>
+        <td>OVEN</td>
+        <td>An oven cooking appliance.</td>
+    </tr>
+    <tr>
+        <td>PHONE</td>
+        <td>A non-mobile phone, such as landline or an IP phone.</td>
+    </tr>
+    <tr>
+        <td>SCENE_TRIGGER</td>
+        <td>A combination of devices set to a specific state. Use scene triggers for scenes when the order of the state change is not important. For example, for a scene named "bedtime" you might turn off the lights and lower the thermostat, in any order.</td>
+    </tr>
+    <tr>
+        <td>SCREEN</td>
+        <td>A projector screen.</td>
+    </tr>
+    <tr>
+        <td>SECURITY_PANEL</td>
+        <td>A security panel.</td>
+    </tr>
+    <tr>
+        <td>SMARTLOCK</td>
+        <td>An endpoint that locks.</td>
+    </tr>
+    <tr>
+        <td>SMARTPLUG</td>
+        <td>A module that is plugged into an existing electrical outlet, and then has a device plugged into it.  For example, a user can plug a smart plug into an outlet, and then plug a lamp into the smart plug. A smart plug can control a variety of devices.</td>
+    </tr>
+    <tr>
+        <td>SPEAKER</td>
+        <td>A speaker or speaker system.</td>
+    </tr>
+    <tr>
+        <td>STREAMING_DEVICE</td>
+        <td>A streaming device such as Apple TV, Chromecast, or Roku.</td>
+    </tr>
+    <tr>
+        <td>SWITCH</td>
+        <td>A switch wired directly to the electrical system. A switch can control a variety of devices.</td>
+    </tr>
+    <tr>
+        <td>TABLET</td>
+        <td>A tablet computer.</td>
+    </tr>
+    <tr>
+        <td>TEMPERATURE_SENSOR</td>
+        <td>An endpoint that reports temperature, but does not control it. The temperature data of the endpoint is not shown in the Alexa app.</td>
+    </tr>
+    <tr>
+        <td>THERMOSTAT</td>
+        <td>An endpoint that controls temperature, stand-alone air conditioners, or heaters with direct temperature control.</td>
+    </tr>
+    <tr>
+        <td>TV</td>
+        <td>A television.</td>
+    </tr>
+    <tr>
+        <td>WEARABLE</td>
+        <td>A network-connected wearable device, such as an Apple Watch, Fitbit, or Samsung Gear.</td>
+    </tr>
+</tbody>
 </table>
 </pre>
 default = "Switch" (vergleiche : https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories )
@@ -959,4 +1022,137 @@ Speicher:
               - R_WERT = list[0]
               - G_WERT = list[1]
               - B_WERT = list[2]
+</code></pre>
+
+
+## RangeController <a name="RangeController"/></a>
+
+Alexa, setze Licht Speicher auf rot
+
+Folgende Paramter sind anzugeben :
+
+<pre><code>
+alexa_actions: SetRangeValue AdjustRangeValue 
+alexa_range_delta: 20
+alexa_item_range: 0-255
+</code></pre>
+
+ergänzt um das entsprechende Categorie-Icon
+
+<pre><code>
+alexa_icon: EXTERIOR_BLIND
+</code></pre>
+
+oder
+
+<pre><code>
+alexa_icon: INTERIOR_BLIND
+</code></pre>
+
+Der RangeController kann mit dem Percentage-Controller kombiniert werden
+
+<pre><code>
+alexa_actions: SetRangeValue AdjustRangeValue SetPercentage 
+alexa_range_delta: 20
+alexa_item_range: 0-255
+</code></pre>
+
+
+## ColorTemperaturController <a name="ColorTemperaturController"/></a>
+
+Es müssen die Parameter für den einstellbaren Weiss-Bereich unter "alexa_item_range" in Kelvin von/bis angegeben werden.
+Da die Geräte der verschiedenen Hersteller unterschiedliche Weißbereiche abdecken ist wird dieser Wert benötigt.
+Falls ein Weißwert angefordert wird den das jeweilige Gerät nicht darstellen kann wird auf den Minimum bzw. den Maximumwert gestellt.
+
+Als Alexa-Actions müssen SetColorTemperature/IncreaseColorTemperature/DecreaseColorTemperature angegeben werden.
+Als Rückgabewert wird das entsprechende Item vom plugin auf den Wert von 0 (warmweiss) bis 255 (kaltweiss) gesetzt.
+
+
+<pre><code>
+alexa_item_range: 3000-6500
+alexa_actions: SetColorTemperature IncreaseColorTemperature DecreaseColorTemperature
+</code></pre>
+
+
+
+# Beispiele <a name="Beispiel"/></a>
+
+## Der fast perfekte Rolladen <a name="perfect_blind"/></a>
+
+Mit diesen Einstellungen kann ein Rolladen wie folgt gesteuert werden :
+
+Alexa,
+
+mach den Rolladen hoch
+mach den Rolladen runter
+öffen den Rolladen
+mach den Rolladen im Büro auf 
+schliesse den Rolladen
+mach den Rolladen im Büro zu
+
+fahre Rolladen Büro auf siebzig Prozent
+
+stoppe Rolladen Büro
+
+Es wird zum einen der RangeController mit erweiterten Ausdrücken verwendet zum anderen wird
+der PlaybackController zweckentfremdet für das Stop-Signal
+
+### !! Wichtig !!
+
+<b>
+Die erweiterten Ausdrücke (öffnen/schliessen - hoch/runter) werden durch das Plugin automatisch
+beim RangeController eingebunden wenn als Alexa-Icon "EXTERIOR_BLIND" oder "INTERIOR_BLIND" parametriert werden.
+
+Beim Stop des Rolladen-Items muss "alexa_actions: Stop" angegeben werden
+Um das Item automatisch zurückzusetzen empfiehlt sich der autotimer-Eintrag.
+
+
+Bei der Positionierung des Rolladen muss "alexa_range_delta: xx" angegeben werden.
+"xx" ist hier der Wert der beim Kommando hoch/runter gesendet wird.
+Bei xx=20 und "Rolladen runter" würde der Rolladen 20 Prozent nach unten fahren.
+Bei xx=20 und "Rolladen hoch" würde der Rolladen 20 Prozent nach oben fahren.
+Wenn der Rolladen bei "hoch/runter" komplett fahren soll kann hier auch 100 angegeben werden.
+
+Für die Positionierung ist "alexa_item_range: 0-255" anzugeben.
+</b>
+<pre><code>
+        Rolladen:
+            alexa_name: Rollladen Büro
+            alexa_device: rolladen_buero
+            alexa_description: Rollladen Büro
+            alexa_icon: EXTERIOR_BLIND
+            alexa_proactivelyReported: 'False'
+            alexa_retrievable: 'True'
+
+            move:
+                type: num
+                visu_acl: rw
+                knx_dpt: 1
+                knx_send: 3/2/23
+                enforce_updates: 'true'
+
+            stop:
+                type: num
+                visu_acl: rw
+                enforce_updates: 'true'
+                knx_dpt: 1
+                knx_send: 3/1/23
+                alexa_device: rolladen_buero
+                alexa_actions: Stop 
+                alexa_retrievable: 'False'
+                alexa_proactivelyReported: 'False'
+                autotimer: 1 = 0
+
+            pos:
+                type: num
+                visu_acl: rw
+                knx_dpt: 5
+                knx_listen: 3/3/23
+                knx_send: 3/4/23
+                knx_init: 3/3/23
+                enforce_updates: 'true'
+                alexa_actions: SetRangeValue AdjustRangeValue 
+                alexa_retrievable: 'True'
+                alexa_range_delta: 20
+                alexa_item_range: 0-255
 </code></pre>

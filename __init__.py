@@ -183,6 +183,18 @@ class Alexa4P3(SmartPlugin):
             alexa_color_value_type = item.conf['alexa_color_value_type']
             device.alexa_color_value_type = alexa_color_value_type
             self.logger.debug("Alexa4P3: {}-ColorValueType = {}".format(item.id(), device.alexa_color_value_type))
+        
+        # special Alexa_Instance for RangeController
+        if 'alexa_range_delta' in item.conf:
+            alexa_range_delta = item.conf['alexa_range_delta']
+            device.alexa_range_delta = alexa_range_delta
+            self.logger.debug("Alexa4P3: {}-Alexa_Range_Delta = {}".format(item.id(), device.alexa_range_delta))
+        
+        # special Alexa_Instance for ColorTemperaturController
+        if 'alexa_color_temp_delta' in item.conf:
+            alexa_color_temp_delta = item.conf['alexa_color_temp_delta']
+            item.alexa_color_temp_delta = alexa_color_temp_delta
+            self.logger.debug("Alexa4P3: {}-Alexa_ColorTemp_Delta = {}".format(item.id(), item.alexa_color_temp_delta))
             
             
         #===============================================

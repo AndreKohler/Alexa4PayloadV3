@@ -17,16 +17,39 @@ import colorsys
 from . import p3_tools as p3tools
 
  
-
+ALEXA_Range_Controller={}
 
 DEFAULT_RANGE = (0, 100)
 DEFAULT_RANGE_LOGIC = (True, False)
+
+
+## Start - Definitions for global used Utterances from the global catalog
+ALEXA_Range_Controller["capabilityResources"] = {"friendlyNames":[{"@type":"asset","value":{"assetId":"Alexa.Setting.Opening"}}]}
+ALEXA_Range_Controller["configuration"] = {"supportedRange":{"minimumValue":0,"maximumValue":100,"precision":1},"unitOfMeasure":"Alexa.Unit.Percent"}
+ALEXA_Range_Controller["semantics"] =  {"actionMappings":[{"@type":"ActionsToDirective","actions":["Alexa.Actions.Close"],"directive":{"name":"SetRangeValue","payload":{"rangeValue":100}}},{"@type":"ActionsToDirective","actions":["Alexa.Actions.Open"],"directive":{"name":"SetRangeValue","payload":{"rangeValue":0}}},{"@type":"ActionsToDirective","actions":["Alexa.Actions.Lower"],"directive":{"name":"AdjustRangeValue","payload":{"rangeValueDelta":999,"rangeValueDeltaDefault":False}}},{"@type":"ActionsToDirective","actions":["Alexa.Actions.Raise"],"directive":{"name":"AdjustRangeValue","payload":{"rangeValueDelta":-999,"rangeValueDeltaDefault":False}}}],"stateMappings":[{"@type":"StatesToValue","states":["Alexa.States.Closed"],"value":0},{"@type":"StatesToRange","states":["Alexa.States.Open"],"range":{"minimumValue":1,"maximumValue":100}}]}
+
+## End  - Definitions for global used Utterances from the global catalog
+                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
 
 def what_percentage(value, range):
     _min, _max = range
     return ( (value - _min) / (_max - _min) ) * 100
 
-
+def percent_2_kelvin(value, device_range):
+    _minDevice, _maxDevice = device_range
+    range2Set = _maxDevice - _minDevice
+    
+    kelvin2Add = (value/100.0*range2Set)
+    
+    value_new = round((kelvin2Add+_minDevice)/10)*10
+    if value_new > _maxDevice:
+        value_new = _maxDevice
+    if value_new < _minDevice:
+        value_new = _minDevice
+    
+    
+    return value_new
 
 class AlexaService(object):
     def __init__(self, logger, version, devices, actions, host, port, auth=None, https_certfile=None, https_keyfile=None):
@@ -235,7 +258,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
             newcapa = {"type": "AlexaInterface",
                        "interface": "Alexa.EndpointHealth",
                        "version": "3",
-                       "properties": {
+                       "properties" : {
                            "supported": [
                                {
                                    "name": "connectivity"
@@ -284,6 +307,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                             }
                         }
                     # Check of special NameSpace
+                    
                     if NameSpace == 'Alexa.ThermostatController':
                         AlexaItem = self.devices.get(device.id)
                         myModeList = self.GenerateThermoList(AlexaItem.thermo_config, 2)
@@ -295,7 +319,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                                       "supportedModes":
                                       myModes
                                       }
-                        newcapa['properties']['configuation'] = mysupported
+                        newcapa['properties']['configuration'] = mysupported
                         mysupported=[
                                      {"name" : 'thermostatMode'},
                                      {"name" : 'targetSetpoint'}
@@ -331,15 +355,41 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                                   "version": "3",
                                   "supportedOperations" : myModes
                                 }
+                    
+                    
+                    if NameSpace == 'Alexa.RangeController':
+                        try:
+                            if hasattr(device, "alexa_range_delta"):
+                                alexa_range_delta = device.alexa_range_delta
+                            else:
+                                alexa_range_delta = 20      # default
+                                
+                            myConfig = json.dumps(ALEXA_Range_Controller["semantics"])
+                            myConfig = myConfig.replace("-999",str(int(alexa_range_delta)*-1))
+                            myConfig = myConfig.replace("999",str(int(alexa_range_delta)))
+                            myConfig = json.loads(myConfig)
+                            
+                            if ("EXTERIOR_BLIND" in device.icon  or "INTERIOR_BLIND" in device.icon):
+                                newcapa["instance"] = device.id
+                                newcapa["capabilityResources"]  = ALEXA_Range_Controller["capabilityResources"]
+                                newcapa["configuration"] = ALEXA_Range_Controller["configuration"]
+                                newcapa["semantics"] = myConfig
+   
+                        except Exception as e:
+                            pass
+
                             
                     # End Check special Namespace
                     mycapabilities.append(newcapa)
                 if device.icon == None:
                     device.icon = ["SWITCH"]
+                    
+                    
+                
                 appliance = {
                     "endpointId": device.id,
                     "friendlyName": device.name,
-                    "description": "SmartHomeNG",
+                    "description": device.description + " by SmartHomeNG",
                     "manufacturerName": "SmarthomeNG",
                     "displayCategories": 
                         device.icon,
@@ -350,6 +400,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                         mycapabilities
                     }
                 discovered.append(appliance)
+        
         
         return {
             "event": {
@@ -420,7 +471,7 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                 differentNameSpace = ''
                 # all informations colletec (Namespace, ResponseTyp, .....
                 # check if capabilitie is alredy in
-                self.logger.info("Alexa: ReportState", Item._name)
+                self.logger.debug("Alexa: ReportState for {}".format(Item._name))
                 if myAction.response_type not in str(alreadyReportedControllers):
                 #if myAction.namespace not in str(alreadyReportedControllers):
                 #if myAction.response_type not in str(Properties):
@@ -432,6 +483,16 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                         elif myValue == 1:
                             myValue = 'ON'
                     
+                    elif myAction.namespace == "Alexa.RangeController":
+                        item_range = Item.alexa_range
+                        item_now = Item()
+                        myValue = int(what_percentage(item_now, item_range))
+                    
+                    elif myAction.namespace == "Alexa.ColorTemperatureController":
+                        item_now = Item()
+                        myPercentage = int(what_percentage(item_now, [0,255]))
+                        myValue = percent_2_kelvin(myPercentage,Item.alexa_range)
+                        
                     elif myAction.namespace == "Alexa.BrightnessController":
                         item_range = Item.alexa_range
                         item_now = Item()
@@ -516,7 +577,6 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                                     "brightness": myHSB[2]
                                  }
                     elif myAction.namespace == 'Alexa.PlaybackController':
-                        print('Playback arrived')
                         differentNameSpace = 'Alexa.PlaybackStateReporter'
                         myValue ={
                                  "state": "PLAYING"

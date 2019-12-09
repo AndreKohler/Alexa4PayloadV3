@@ -8,6 +8,11 @@ font-size: 12px;
 </style>
 
 <!-- Functions in Scripts       -->
+
+<script src="./static/js/handler.js"></script>
+
+
+
 {% extends "base_plugin.html" %}
 
 {% set logo_frame = false %}
@@ -398,11 +403,11 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         }
 });
  function resizeCodeMirrors() {
-    if (!myCodeMirrorConf.getOption("fullScreen")) {
+    if (!yaml_resultCodeMirror.getOption("fullScreen")) {
         var browserHeight = $( window ).height();
         offsetTop = $('.CodeMirror').offset().top;
-        myCodeMirrorConf.getScrollerElement().style.maxHeight = ((-1)*(offsetTop) -1800 + browserHeight)+ 'px';
-        myCodeMirrorConf.refresh();
+        yaml_resultCodeMirror.getScrollerElement().style.maxHeight = ((-1)*(offsetTop) -1800 + browserHeight)+ 'px';
+        yaml_resultCodeMirror.refresh();
     }
 
  }

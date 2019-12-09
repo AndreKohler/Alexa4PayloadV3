@@ -36,11 +36,154 @@ def clamp_temp(temp, range):
     _min, _max = range
     return min(_max, max(_min, temp))
 
+DEFAULT_RANGE_COLOR_TEMP = (1000,10000)
 
+def kelvin_2_percent(kelvin, device_range):
+    _minDevice, _maxDevice = device_range
+    range2Set = _maxDevice - _minDevice
+    percent_kelvin = 100.0/range2Set
+    kelvin2Set = kelvin-_minDevice
+    value_new = kelvin2Set*percent_kelvin
+    if value_new > 100.0:
+        value_new = 100.0
+    if value_new < 0.0:
+        value_new = 0.0
+
+    return value_new
+
+def percent_2_kelvin(value, device_range):
+    _minDevice, _maxDevice = device_range
+    range2Set = _maxDevice - _minDevice
+    
+    kelvin2Add = (value/100.0*range2Set)
+    
+    value_new = round((kelvin2Add+_minDevice)/10)*10
+    if value_new > _maxDevice:
+        value_new = _maxDevice
+    if value_new < _minDevice:
+        value_new = _minDevice
+    
+    
+    return value_new
+    
 #======================================================
 # Start - A.Kohler
 # P3 - Directives
 #======================================================
+
+
+
+## Alexa-ColorTemperatureController
+
+@alexa('SetColorTemperature', 'SetColorTemperature', 'colorTemperatureInKelvin','Alexa.ColorTemperatureController',[],"3")
+def SetColorTemperature(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    new_kelvin = float( directive['payload']['colorTemperatureInKelvin'] )
+
+    for item in items:
+        percent_new = kelvin_2_percent(new_kelvin, item.alexa_range)
+        item_new = int(percent_new/100.0*255.0)
+        self.logger.info("Alexa P3: SetColorTemperature({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )            # in 0-255 
+        self.response_Value = None
+        self.response_Value = int(new_kelvin)
+    
+    return self.p3_respond(directive)
+
+
+@alexa('IncreaseColorTemperature', 'IncreaseColorTemperature', 'colorTemperatureInKelvin','Alexa.ColorTemperatureController',[],"3")
+def IncreaseColorTemperature(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    
+    for item in items:
+        
+        item_now = item()
+        _min, _max = item.alexa_range
+        myPercentage = int(what_percentage(item_now, [0,255]))
+        new_kelvin = percent_2_kelvin(myPercentage,item.alexa_range)        
+        new_kelvin = new_kelvin + int(item.alexa_color_temp_delta)
+        if  (new_kelvin > _max):
+            new_kelvin = _max
+        percent_new = kelvin_2_percent(new_kelvin, item.alexa_range)
+        item_new = int(percent_new/100.0*255.0)
+        item( item_new )
+        
+        self.logger.info("Alexa P3: IncreaseColorTemperature({}, {:.1f})".format(item.id(), item_new))
+        
+        self.response_Value = None
+        self.response_Value = int(new_kelvin)
+    
+    return self.p3_respond(directive)
+
+
+@alexa('DecreaseColorTemperature', 'DecreaseColorTemperature', 'colorTemperatureInKelvin','Alexa.ColorTemperatureController',[],"3")
+def DecreaseColorTemperature(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    
+    for item in items:
+        
+        item_now = item()
+        _min, _max = item.alexa_range
+        myPercentage = int(what_percentage(item_now, [0,255]))
+        new_kelvin = percent_2_kelvin(myPercentage,item.alexa_range)        
+        new_kelvin = new_kelvin - int(item.alexa_color_temp_delta)
+        if  (new_kelvin < _min):
+            new_kelvin = _min
+        percent_new = kelvin_2_percent(new_kelvin, item.alexa_range)
+        item_new = int(percent_new/100.0*255.0)
+        item( item_new )
+        
+        self.logger.info("Alexa P3: DecreaseColorTemperature({}, {:.1f})".format(item.id(), item_new))
+        
+        self.response_Value = None
+        self.response_Value = int(new_kelvin)
+    
+    return self.p3_respond(directive)
+
+# Alexa-Range-Controller
+
+@alexa('AdjustRangeValue', 'AdjustRangeValue', 'rangeValue','Alexa.RangeController',[],"3")
+def AdjustRangeValue(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    
+    percentage_delta = float( directive['payload']['rangeValueDelta'] )
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_RANGE)
+        item_now = item()
+        percentage_now = what_percentage(item_now, item_range)
+        percentage_new = clamp_percentage(percentage_now + percentage_delta, item_range)
+        item_new = calc_percentage(percentage_new, item_range)
+        self.logger.info("Alexa P3: AdjustRangeValue({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = int(percentage_new)
+    
+    return self.p3_respond(directive)
+    
+@alexa('SetRangeValue', 'SetRangeValue', 'rangeValue','Alexa.RangeController',[],"3")
+def SetRangeValue(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    new_percentage = float( directive['payload']['rangeValue'] )
+
+    for item in items:
+        item_range = self.item_range(item, DEFAULT_RANGE)
+        item_new = calc_percentage(new_percentage, item_range)
+        self.logger.info("Alexa P3: SetRangeValue({}, {:.1f})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = int(new_percentage)
+    
+    return self.p3_respond(directive)
+
+
+
+
 # Alexa ThermostatController
 
 @alexa('SetThermostatMode', 'SetThermostatMode', 'thermostatMode','Alexa.ThermostatController',['SetTargetTemperature'],"3")
@@ -321,21 +464,106 @@ def Activate(self, directive):
     
     return self.p3_respond(directive)
 
+# Playback-Controller
 
 @alexa('Play', 'Play', '','Alexa.PlaybackController',[],"3")
 def Play(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC Play received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
 
 @alexa('Stop', 'Stop', '','Alexa.PlaybackController',[],"3")
 def Stop(self, directive):
     device_id = directive['endpoint']['endpointId']
     items = self.items(device_id)
-
-
     for item in items:
         item_new = 1                   
         self.logger.info("Alexa P3: PBC Stop received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('FastForward', 'FastForward', '','Alexa.PlaybackController',[],"3")
+def FastForward(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC FastForward received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('Next', 'Next', '','Alexa.PlaybackController',[],"3")
+def Next(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC Next received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('Pause', 'Pause', '','Alexa.PlaybackController',[],"3")
+def Pause(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC Pause received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('Previous', 'Previous', '','Alexa.PlaybackController',[],"3")
+def Previous(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC Previous received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('Rewind', 'Rewind', '','Alexa.PlaybackController',[],"3")
+def Rewind(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC Rewind received ({}, {})".format(item.id(), item_new))
+        item( item_new )
+        self.response_Value = None
+        self.response_Value = item_new
+    
+    return self.p3_respond(directive)
+
+@alexa('StartOver', 'StartOver', '','Alexa.PlaybackController',[],"3")
+def StartOver(self, directive):
+    device_id = directive['endpoint']['endpointId']
+    items = self.items(device_id)
+    for item in items:
+        item_new = 1                   
+        self.logger.info("Alexa P3: PBC StartOver received ({}, {})".format(item.id(), item_new))
         item( item_new )
         self.response_Value = None
         self.response_Value = item_new
