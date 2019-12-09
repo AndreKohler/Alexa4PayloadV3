@@ -1032,7 +1032,6 @@ Speicher:
 
 ## RangeController <a name="RangeController"/></a>
 
-Alexa, setze Licht Speicher auf rot
 
 Folgende Paramter sind anzugeben :
 
