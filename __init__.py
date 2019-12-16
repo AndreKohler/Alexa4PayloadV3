@@ -31,7 +31,7 @@ from lib.item import Items
 from lib.shtime import Shtime
 import logging
 import json
-
+import datetime
 
 from .device import AlexaDevices, AlexaDevice
 from .action import AlexaActions
@@ -47,6 +47,26 @@ from . import p3_action
 
 
 
+
+class protocoll(object):
+    
+    log = []
+    
+    def __init__(self):
+        pass
+    
+    def addEntry(self,type, _text ):
+        myLog = self.log
+        if (myLog == None):
+            return
+        try:
+            if len (myLog) >= 500:
+                myLog = myLog[0:499]
+        except:
+            return
+        now = str(datetime.datetime.now())[0:22]
+        myLog.insert(0,str(now)[0:19]+' Type: ' + str(type) + ' - '+str(_text))
+        self.log = myLog
 
 
 
@@ -67,10 +87,14 @@ class Alexa4P3(SmartPlugin):
         
         self.devices = AlexaDevices()
         self.actions = AlexaActions(self.sh, self.logger, self.devices)
-        self.service = AlexaService(self.logger, self.PLUGIN_VERSION, self.devices, self.actions,
+        
+        self._proto = protocoll()
+        
+        self.service = AlexaService(self._proto,self.logger, self.PLUGIN_VERSION, self.devices, self.actions,
                                     self.service_host, int(self.service_port), self.service_https_certfile, self.service_https_keyfile)
         self.action_count_v2 = 0
         self.action_count_v3 = 0
+        
         
         self.init_webinterface()
 
@@ -78,6 +102,8 @@ class Alexa4P3(SmartPlugin):
         self.validate_devices()
         self.create_alias_devices()
         self.alive = True
+        #myProto = getattr(self,'_proto.addEntry')
+        #self.service._proto = myProto
         self.service.start()
         
         
@@ -276,6 +302,7 @@ class Alexa4P3(SmartPlugin):
             for action_name in action_names:
                 device.register(action_name, item)
             self.logger.info("Alexa: {} supports {} as device {}".format(item.id(), action_names, device_id, device.supported_actions()))
+            self._proto.addEntry('INFO   ', "Alexa: {} supports {} as device {}".format(item.id(), action_names, device_id, device.supported_actions()))
 
         return None
 
@@ -285,18 +312,22 @@ class Alexa4P3(SmartPlugin):
     def validate_devices(self):
         for device in self.devices.all():
             self.logger.debug("validating device {}".format(device.id))
-            if not device.validate(self.logger):
+            self._proto.addEntry('INFO   ', "validating device {}".format(device.id))
+            if not device.validate(self.logger, self._proto):
                 self.devices.delete(device.id)
-                self.logger.warning("invalid device {} - deleted Device from Plugin".format(device.id))
+                self.logger.warning("invalid device {} - removed Device from Plugin".format(device.id))
+                self._proto.addEntry('WARNING', "invalid device {} - removed Device from Plugin".format(device.id))
 
     def create_alias_devices(self):
         for device in self.devices.all():
             alias_devices = device.create_alias_devices()
             for alias_device in alias_devices:
                 self.logger.info("Alexa: device {} aliased '{}' via {}".format(device.id, alias_device.name, alias_device.id))
+                self._proto.addEntry('INFO   ', "Alexa: device {} aliased '{}' via {}".format(device.id, alias_device.name, alias_device.id))
                 self.devices.put( alias_device )
 
         self.logger.info("Alexa: providing {} devices".format( len(self.devices.all()) ))
+
 
 
     def init_webinterface(self):
@@ -396,6 +427,17 @@ class WebInterface(SmartPluginWebIf):
         return item_count, alexa_items
     
     @cherrypy.expose
+    def get_proto_html(self, proto_Name= None):
+        if proto_Name == 'state_log_file':
+            return json.dumps(self.plugin._proto.log)
+
+    @cherrypy.expose
+    def clear_proto_html(self, proto_Name= None):
+        self.plugin._proto.log = []
+        return None
+
+    
+    @cherrypy.expose
     def index(self, reload=None):
         """
         Build index.html for cherrypy
@@ -408,7 +450,15 @@ class WebInterface(SmartPluginWebIf):
         
         item_count,alexa_items = self.get_alexa_items()
         yaml_result = '\r\n'
-
+        
+        try:
+            my_state_loglines = self.plugin._proto.log
+            state_log_file = ''
+            for line in my_state_loglines:
+                state_log_file += str(line)+'\n'
+        except:
+            state_log_file = 'No Data available right now\n'
+        
         payload_action = "used Actions Payload V2 = " + str(self.plugin.action_count_v2) + " / " +"<strong>used Actions Payload V3 = " + str(self.plugin.action_count_v3)+'</strong>'
         if (self.plugin.action_count_v2 != 0 and self.plugin.action_count_v3 != 0):
             payload_action = '<font color="red">' + payload_action + '</font>'
@@ -421,6 +471,8 @@ class WebInterface(SmartPluginWebIf):
                            items=sorted(alexa_items, key=lambda k: str.lower(k['AlexaName'])),
                            item_count=item_count,
                            yaml_result=yaml_result,
-                           payload_action=payload_action )
+                           payload_action=payload_action,
+                           state_log_lines=state_log_file
+                           )
 
 

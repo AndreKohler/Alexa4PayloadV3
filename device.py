@@ -82,39 +82,59 @@ class AlexaDevice(object):
             alias_device.description = self.description
             alias_device.action_items = self.action_items
             alias_device.types = self.types
+            # P3-properties 
+            alias_device.icon = self.icon
+            alias_device.thermo_config = self.thermo_config
+            alias_device.retrievable = self.retrievable
+            alias_device.proactivelyReported = self.proactivelyReported
+            alias_device.camera_setting = self.camera_setting
+            alias_device.camera_uri = self.camera_uri
+            alias_device.camera_imageUri = self.camera_imageUri
+            alias_device.alexa_auth_cred = self.alexa_auth_cred
+            alias_device.alexa_color_value_type = self.alexa_color_value_type
+            alias_device.proxied_Urls = self.proxied_Urls
+            alias_device.alexa_proxy_credentials = self.alexa_proxy_credentials
 
             alias_devices.append( alias_device )
 
         return alias_devices
 
-    def validate(self, logger):
+    def validate(self, logger ,proto):
         if not self.id:
             msg = "Alexa-Device {}: empty identifier".format(self.id)
             logger.warning(msg)
+            proto.addEntry('WARNING',msg)
             return False
         elif len(self.id) > 128:
             msg = "Alexa-Device: {}: identifier '{}' too long >128".format(self.id, self.id)
             logger.warning(msg)
+            proto.addEntry('WARNING',msg)
             return False
 
         if not self.name:
             msg = "Alexa-Device {}: empty name".format(self.id)
             logger.warning(msg)
+            proto.addEntry('WARNING',msg)
             return False
         elif len(self.name) > 128:
             msg = "Alexa-Device: {}: name '{}' too long >128".format(self.id, self.name)
             logger.warning(msg)
+            proto.addEntry('WARNING',msg)
             return False
 
         if not self.description:
             logger.warning("Alexa-Device {}: empty description, fallback to name '{}' - please set `alexa_description`".format(self.id, self.name))
+            proto.addEntry('WARNING',msg)
             self.description = self.name
         elif len(self.description) > 128:
             msg = "Alexa-Device {}: description '{}' too long >128".format(self.id, self.description)
             logger.warning(msg)
+            proto.addEntry('WARNING',msg)
             return False
 
         if not self.action_items:
-            logger.warning("Alexa-Device {}: no actions/items registered - please set `alexa_actions`".format(self.id))
+            msg="Alexa-Device {}: no actions/items registered - please set `alexa_actions`".format(self.id)
+            logger.warning(msg)
+            proto.addEntry('WARNING',msg)
 
         return True

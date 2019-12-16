@@ -18,7 +18,7 @@
 14. [Alexa-ColorController](#ColorController)
 15. [Alexa-RangeController](#RangeController) <sup><span style="color:red"> **Neu**</sup></span>
 16. [Alexa-ColorTemperaturController](#ColorTemperaturController) <sup><span style="color:red"> **Neu**</sup></span>
-17.
+17. [Alexa-PlaybackController](#PlaybackController) <sup><span style="color:red"> **Neu**</sup></span>
 18.
 19.
 20. [Web-Interface](#Web-Interface) <sup><span style="color:red"> **Neu**</sup></span>
@@ -73,6 +73,11 @@ PayloadV3 : TurnOn
 Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Klein-Schreibung
 
 ## Change Log <a name="changelog"/></a>
+
+### 07.12.2019
+- Web-Interface um Protokoll-Log ergänzt 
+- PlaybackController realisiert 
+- bux-fix for alias-Devices, es wurden nicht alle Eigenschaften an das Alias-Device übergeben. Voice-Steuerung funktionierte, Darstellung in der App war nicht korrekt.
 
 ### 06.12.2019 - zum Nikolaus :-)
 - RangeController mit global "utterances" für Rolladen realisiert - endlich "Alexa, mach den Rolladen zu/auf - hoch/runter"
@@ -1078,7 +1083,22 @@ alexa_item_range: 3000-6500
 alexa_actions: SetColorTemperature IncreaseColorTemperature DecreaseColorTemperature
 </code></pre>
 
+## PlaybackController <a name="PlaybackController"/></a>
 
+Eingebaut um fahrende Rolladen zu stoppen.
+
+#### Alexa, stoppe den Rolladen Büro
+
+Das funktioniert nur, wenn beim Rolladen/Jalousie kein TurnOn/TurnOff definiert sind. Die Rolladen müssen mittels "AdjustPercentage" und "SetPercentage" angesteuert werden. Dann kann mit dem "Stop" Befehl der Rolladen angehalten werden.
+
+Die Action lautet "Stop". Es wird an dieser Stelle der Alexa.PlaybackController zweck entfremded. Dieser Controller hat eine "Stop" Funktion implementiert welche hier genutzt wird.
+Beim ausführen des Befehls wird eine "1" an das Item übergeben. Das Item muss der Stopbefehl für den Rolladen sein. <b>enforce_update</b> muss auf True stehen.
+
+Alle Actions senden jeweils ein "True" bzw. "EIN" bzw. "1"
+
+implementierte Funktionen:
+
+alexa_actions: Stop / Play / Pause / FastForward / Next / Previous / Rewind / StartOver
 
 # Beispiele <a name="Beispiel"/></a>
 
@@ -1092,7 +1112,7 @@ mache den Rolladen hoch
 
 mache den Rolladen runter
 
-öffne den Rolladen
+öffne den Rolladen im Büro
 
 mache den Rolladen im Büro auf
  

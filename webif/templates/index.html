@@ -19,8 +19,8 @@ font-size: 12px;
 {% set use_bodytabs = true %}
 {% set tabcount = 4 %}
 {% set tab1title = "Alexa-Devices (" ~ item_count ~ ")" %}
-{% set tab2title = '' %}
-{% set tab3title = '' %}
+{% set tab2title = 'Protocol' %}
+{% set tab3title = 'Test-functions' %}
 {% set tab4title = 'Create CamProxy Settings' %}
 
 
@@ -78,89 +78,70 @@ font-size: 12px;
 {% endblock bodytab1 %}
 
 {% block bodytab2 %}
-<div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
-	<div class="col-sm-12">
-                        <table class="table table-striped table-hover pluginList">
-			<thead>
-				<tr>
-					<th>{{ _('Alexa-Item') }}</th>
-					<th style="width: 200;">{{ 'Real-URL' }}</th>
-					</tr>
-			</thead>
-			<tbody>
-			{% for item in item_tls %}
-				<tr>
-					<td class="py-1">{{ item.conf['alexa_description'] }}</td>
-					<td class="py-1">{{ item.conf['alexa_csc_uri'] }}</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		        </table>
-        </div>
+<table class="table table-striped table-hover">
+	<tbody>
+    <tr>
+        <td>
+        	<button id="btn_clear_proto_states" class="btn btn-shng btn-sm" name="btn_clear_proto_states" value="on" onclick="DeleteProto(this.name)"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;&nbsp;delete Protocol&nbsp;</button>
+        </td>
+        <td>
+            <div class="custom-control custom-checkbox" style =" vertical-align:middle;align:left">
+                <input type="checkbox" class="custom-control-input" id="proto_states_check" name="proto_states_check">
+                <label class="custom-control-label" for="proto_states_check">Auto Update ( 2 Sek.)</label>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="container-fluid" style="overflow: none; border-left: 1px solid #ccc;height: 60%">
+    <div style="margin-bottom: 10px;height: 100%">
+
+
+        {% if state_log_lines %}<textarea style="height: 100%" autocomplete="off" id="state_log_file" name="state_log_file">{% for line in state_log_lines %}{% if not loop.last %}{{ line }}{% else %}{{ line  | replace('\n', '') }}{% endif %}{% endfor %}</textarea>{% else %}{{ _('no data available') }}{% endif %}
+    </div>
 </div>
+<div class="container-fluid">
+    <table>
+        <tr>
+           <td Hinweis>
+        </tr>   
+    </table>
+</div>
+
+<script type="text/javascript" language="javascript">
+var statelogCodeMirror = CodeMirror.fromTextArea(document.getElementById("state_log_file"),
+ {
+    lineNumbers: true,
+    readOnly: true,
+    indentUnit: 4,
+    lineSeparator: '\n',
+    mode: 'ttcn',
+    lineWrapping: false,
+    indentWithTabs: false,
+    autoRefresh : true
+});
+
+window.addEventListener("resize", function(){resizeCodeMirror(statelogCodeMirror, 10)}, false);
+resizeCodeMirror(statelogCodeMirror, 10);
+statelogCodeMirror.refresh();
+console.log ("refreshed CodeMirror StateLog")
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  var target = $(e.target).attr("href") // activated tab
+  if (target == "#bodytab_2")
+        { statelogCodeMirror.refresh(); }
+
+});
+
+</script>
 {% endblock bodytab2 %}
 
 {% block bodytab3 %}
 <div class="table-responsive" style="margin-left: 2px; margin-right: 2px;" class="row">
 	<div class="col-sm-12">
-                <div class="row">
-                    <div class="col" style="max-width: 50%;">
-                        <div class="card">
-                            <div class="card-header p-1 shng_heading">
-                                <a class="float-sm-right" href="#" onclick="reloadThreads();" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
-                                <strong>{{ _('Threads existing ...') }}</strong>
-                            </div>
-                            <div class="card-body p-1">
-                                <div class="card-text" style="">
-                                    <div id="cardOverlay" class="cardOverlay">
-                                        <div style="position: relative; top: 45%; left:45%;">
-                                            <span id="reload-element" class="fas fa-sync fa-4x"/>
-                                        </div>
-                                    </div>
-                                    <div id="threads" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
-                                    {{ _('Threads.....') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col" style="max-width: 50%;">
-                        <div class="card" >
-                            <div class="card-header p-1 shng_heading">
-				<table>
-				<tr>
-
-				<strong align="left">{{ _('Thread-Details') }}</strong>
-
-
-
-
-
-                                <a class="float-sm-right" align="right" href="#" onclick="SelectListItem(actThreadName);" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element_details" class="fas fa-sync"></span></a>
-
-                            </tr>
-                            </table>
-			    </div>
-                            <div class="card-body p-1" style="position: relative;">
-                                <div class="card-text" style="">
-                                    <div id="cardOverlay_Details" class="cardOverlay_Details">
-                                        <div style="position: relative; top: 45%; left:45%;">
-                                            <span id="reload-element_details" class="fas fa-sync fa-4x"/>
-                                        </div>
-                                    </div>
-                                    <div id="thread_details" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
-                                    {{ _('Details.....') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-    </div>
+   	<button id="send_discovery" class="btn btn-shng btn-sm" name="create_yaml" value="on" onclick="send_discovery()"><i class="fas fa-random"></i>&nbsp;&nbsp;&nbsp;Send Discovery&nbsp;</button>
 </div>
-
+</div>
 {% endblock bodytab3 %}
 
 {% block bodytab4 %}
@@ -180,47 +161,47 @@ font-size: 12px;
 	                <tbody>
 		                <tr>
 			                <td class="py-1"> <strong>Item-Name :</strong></td>
-			                <td colspan="3" class="py-1"><input style="width: 600px;"  id="Cam_Name" placeholder="doorcam"></td>
+			                <td colspan="3" class="py-1"><input style="width: 600px;"  id="Cam_Name" placeholder="doorcam" onkeydown="setColor2White(this.id)"></td>
                             <td> </td>
                             <td> </td>
 		                </tr>
 		                <tr>
 			                <td class="py-1" style="width: 30%;"><strong>Alexa-Name of the Camera :</strong></td>
-			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Name" placeholder="doorcam"></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Name" placeholder="doorcam" onkeydown="setColor2White(this.id)"></td>
                             <td style="width: 10%;"> </td>
                             <td style="width: 10%;"> </td>
 		                </tr>
 		                <tr>
 			                <td class="py-1" style="width: 30%;"><strong>Alexa-Device of the Camera :</strong></td>
-			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Device" placeholder="doorcam"></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Device" placeholder="doorcam" onkeydown="setColor2White(this.id)"></td>
                             <td style="width: 10%;"> </td>
                             <td style="width: 10%;"> </td>
 		                </tr>
 		                <tr>
 			                <td class="py-1" style="width: 30%;"><strong>Alexa-Description :</strong></td>
-			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Description" placeholder="doorcam"></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Alexa_Description" placeholder="doorcam" onkeydown="setColor2White(this.id)"></td>
                             <td style="width: 10%;"> </td>
                             <td style="width: 10%;"> </td>
 		                </tr>
 		                <tr>
 			                <td style="width: 30%;" class="py-1"><strong>Proxy-URL (https) :</strong></td>
-			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Proxy_Url" placeholder="testcam.dyndns.com"></td>
+			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Proxy_Url" placeholder="testcam.dyndns.com" onkeydown="setColor2White(this.id)"></td>
                             <td style="width: 10%;"> </td>
                             <td style="width: 10%;"> </td>
 		                </tr>
-		                <tr>
-			                <td style="width: 30%;" class="py-1"><strong>Real IP in your LAN :</strong></td>
-			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="real_IP" placeholder="192.168.178.9"></td>
-                            <td style="width: 10%;"> </td>
-                            <td style="width: 10%;"> </td>
-		                </tr>
+
                         <tr>
 			                <td class="py-1"><strong>Image-URL :</strong></td>
-			                <td class="py-1" colspan=3><input style="width: 600px;" id="Image_Url" placeholder="http://192.168.178.9/snapshot/view0.jpg"></td>
+			                <td class="py-1" colspan=3><input style="width: 600px;" id="Image_Url" placeholder="http://192.168.178.9/snapshot/view0.jpg" onkeydown="setColor2White(this.id)"></td>
 		                </tr>
                         <tr>
-			                <td class="py-1"><strong>Credentials :</strong></td>
-			                <td class="py-1" colspan=3>User :    <input id="user" placeholder="user">Password :   <input id="pwd" placeholder="pwd">
+			                <td class="py-1"><strong>Credentials for the AlexaCamProxy4P3:</strong></td>
+			                <td class="py-1" colspan=3>User :    <input id="user" placeholder="user" onkeydown="setColor2White(this.id)">Password :   <input id="pwd" placeholder="pwd" onkeydown="setColor2White(this.id)">
+                            </td>
+		                </tr>
+                        <tr>
+			                <td class="py-1"><strong>Credentials for the Cam himself:</strong></td>
+			                <td class="py-1" colspan=3>User :    <input id="user_cam" placeholder="user_cam" onkeydown="setColor2White(this.id)">Password :   <input id="pwd_cam" placeholder="pwd_cam" onkeydown="setColor2White(this.id)">
                             </td>
 		                </tr>
                     </tbody>
@@ -241,7 +222,7 @@ font-size: 12px;
                           <td></td>
                           <td style="width: 23%;" class="py-1">
 				            <div class="custom-control custom-checkbox" style =" vertical-align:middle;align:left">
-				                <input type="checkbox" class="custom-control-input" id="enable_stream_1" name="enable_stream_1">
+				                <input type="checkbox" class="custom-control-input" id="enable_stream_1" name="enable_stream_1" checked="True">
 				                <label class="custom-control-label" for="enable_stream_1">Stream 1</label>
 				            </div>
                           </td>
@@ -260,10 +241,16 @@ font-size: 12px;
                         </tr>
                         <tr>
 			                <td style="width: 30%;" class="py-1"><strong>Resolution of the Stream :</strong></td>
-			                <td style="width: 10%;" class="py-1"><input id="with_1" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_1" placeholder="height"></td>
-			                <td style="width: 10%;" class="py-1"><input id="with_2" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_2" placeholder="height"></td>
-			                <td style="width: 10%;" class="py-1"><input id="with_3" style="width: 50%;" placeholder="width"><input style="width: 50%;" id="height_3" placeholder="height"></td>
+			                <td style="width: 10%;" class="py-1"><input id="width_1" style="width: 50%;" placeholder="width" onkeydown="setColor2White(this.id)"><input style="width: 50%;" id="height_1" placeholder="height" onkeydown="setColor2White(this.id)"></td>
+			                <td style="width: 10%;" class="py-1"><input id="width_2" style="width: 50%;" placeholder="width" onkeydown="setColor2White(this.id)"><input style="width: 50%;" id="height_2" placeholder="height" onkeydown="setColor2White(this.id)"></td>
+			                <td style="width: 10%;" class="py-1"><input id="width_3" style="width: 50%;" placeholder="width" onkeydown="setColor2White(this.id)"><input style="width: 50%;" id="height_3" placeholder="height" onkeydown="setColor2White(this.id)"></td>
 
+		                </tr>
+		                <tr>
+			                <td style="width: 30%;" class="py-1"><strong>Stream URL in  your LAN :</strong></td>
+			                <td style="width: 10%;" class="py-1"><input style="width: 250px;" id="real_IP_1" placeholder="192.168.178.9/0" onkeydown="setColor2White(this.id)"></td>
+			                <td style="width: 10%;" class="py-1"><input style="width: 250px;" id="real_IP_2" placeholder="192.168.178.9/1" onkeydown="setColor2White(this.id)"></td>
+			                <td style="width: 10%;" class="py-1"><input style="width: 250px;" id="real_IP_3" placeholder="192.168.178.9/2" onkeydown="setColor2White(this.id)"></td>
 		                </tr>
                         <tr>
 			                <td class="py-1"><strong>Video-Codec :</strong></td>
@@ -383,7 +370,7 @@ var yaml_resultCodeMirror = CodeMirror.fromTextArea(document.getElementById("yam
     readOnly: true,
     indentUnit: 4,
     lineSeparator: '\n',
-    mode: 'ttcn',
+    mode: 'yaml',
     lineWrapping: false,
     indentWithTabs: false,
     autoRefresh : true
@@ -392,17 +379,10 @@ var yaml_resultCodeMirror = CodeMirror.fromTextArea(document.getElementById("yam
 window.addEventListener("resize", function(){resizeCodeMirror(yaml_result, 10)}, false);
 resizeCodeMirror(yaml_resultCodeMirror, 10);
 yaml_resultCodeMirror.refresh();
-console.log ("refreshed CodeMirrot")
+console.log ("refreshed CodeMirror-YAML")
 
-$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-  var target = $(e.target).attr("href") // activated tab
-  if (target == "#bodytab_4")
-        {
-         yaml_resultCodeMirror.refresh();
-         yaml_resultCodeMirror.refresh();
-        }
-});
- function resizeCodeMirrors() {
+
+function resizeCodeMirrors() {
     if (!yaml_resultCodeMirror.getOption("fullScreen")) {
         var browserHeight = $( window ).height();
         offsetTop = $('.CodeMirror').offset().top;
@@ -418,3 +398,5 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 {% endblock bodytab4 %}
 
 <!-- -->
+
+
