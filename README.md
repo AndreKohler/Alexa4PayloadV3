@@ -45,7 +45,7 @@ Das Plugin muss in der plugin.yaml eingefügt werden :
 <pre><code>
 Alexa4P3:
     class_name: Alexa4P3
-    class_path: plugins.alexa4p3
+    class_path: plugins.Alexa4P3
     service_port: 9000
 </code></pre>
 
@@ -84,8 +84,9 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 
 ### 01.12.2019
 - Web-Interface ergänzt
-- Prüfung auf Verwendung von gemischtem Payload V2/V3
-- Bug-Fix bei falsch definierten Devices - diese werden entfernt und ein Log-Eintrag erfolgt
+- Prüfung auf Verwendung von gemischtem Payload V2/V3 im Web-Interface
+- Bug-Fix bei falsch definierten Devices (alexa_name fehlt) - Issue #300 - diese werden entfernt und ein Log-Eintrag erfolgt
+- Bug-Fix alexa-description (PR # 292) - die Beschreibung in der App lautet nun "device.name" + "by smarthomeNG"
 - alexa_description beim Geräte Discovery ergänzt
 
 ### 20.04.2019

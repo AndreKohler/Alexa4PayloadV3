@@ -59,6 +59,7 @@ font-size: 12px;
                         <th style="width: 200px;"><font size="-1">{{ _('Device-Name') }}</th>
 					    <th style="width: 600px;"><font size="-1">{{ _('implemented Actions') }}</th>
 					    <th style="width: 200px;"><font size="-1">{{ _('linked to Item') }}</th>
+					    <th style="width: 200px; text-align: right"><font size="-1">{{ _('alias for Device') }}</th>
 					</tr>
 			    </thead>
 			    <tbody>
@@ -67,7 +68,8 @@ font-size: 12px;
 
 					    <td class="py-1"><font size="-1">{{ item.AlexaName }}</td>
 					    <td class="py-1"><font size="-1">{{ item.Actions }}</td>
-					    <td class="py-1"><font size="-1">{{ item.Items }}</td>										
+					    <td class="py-1"><font size="-1">{{ item.Items }}</td>
+					    <td class="py-1" style="text-align: right"><font size="-1">{{ item.Alias_for }}</td>																				
 
 				    </tr>
 			    {% endfor %}
@@ -184,6 +186,18 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                             <td style="width: 10%;"> </td>
 		                </tr>
 		                <tr>
+			                <td style="width: 30%;" class="py-1"><strong>Camery-Type :</strong></td>
+			                <td colspan="3" style="width: 10%;" class="py-1">
+                                <select name="cam_type" id="cam_type" style="width:200px">
+                                  <option value="none">not defined</option>
+                                  <option value="Standard_cam">Standard-Camera</option>
+                                  <option value="Proxy_Cam">AlexaCamProxy-Cam</option>
+                                </select>
+                            </td>
+                            <td style="width: 10%;"> </td>
+                            <td style="width: 10%;"> </td>
+		                </tr>
+		                <tr>
 			                <td style="width: 30%;" class="py-1"><strong>Proxy-URL (https) :</strong></td>
 			                <td colspan="3" style="width: 10%;" class="py-1"><input style="width: 600px;" id="Proxy_Url" placeholder="testcam.dyndns.com" onkeydown="setColor2White(this.id)"></td>
                             <td style="width: 10%;"> </td>
@@ -201,7 +215,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 		                </tr>
                         <tr>
 			                <td class="py-1"><strong>Credentials for the Cam himself:</strong></td>
-			                <td class="py-1" colspan=3>User :    <input id="user_cam" placeholder="user_cam" onkeydown="setColor2White(this.id)">Password :   <input id="pwd_cam" placeholder="pwd_cam" onkeydown="setColor2White(this.id)">
+			                <td class="py-1" colspan=3>User :    <input id="user_cam" placeholder="user to access the cam" onkeydown="setColor2White(this.id)">Password :   <input id="pwd_cam" placeholder="password to acces the cam" onkeydown="setColor2White(this.id)">
                             </td>
 		                </tr>
                     </tbody>

@@ -1,4 +1,14 @@
 //*************************************************************
+// JS-Handler-Script for Alexa4P3
+//
+// (C) Andre Kohler             andre.kohler01@googlemail.com
+// 
+// Change-Log
+//
+// 2019-12-18   -   Change-Log eingeführt
+//*************************************************************
+
+//*************************************************************
 // check Auto-Updates for protocols
 //*************************************************************
 setInterval(Checkupdate4Protocolls, 2000);
@@ -211,7 +221,7 @@ setColor2WhiteForAll()
  YAML +=indent + "alexa_icon: CAMERA" + CrLf
  YAML +=indent + "alexa_actions: InitializeCameraStreams" + CrLf
  YAML +=indent + "alexa_camera_imageUri: $Image_Uri " + CrLf
- YAML +=indent + "alexa_csc_proxy_uri: $proxy_Url" + CrLf
+ YAML +=indent + "alexa_csc_proxy_uri: $proxy_Url" + ":443" + CrLf
  YAML +=indent + "alexa_proxy_credentials: '$proxy_credentials'"
 
 // Definition for Stream

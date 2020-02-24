@@ -270,6 +270,12 @@ class Alexa4P3(SmartPlugin):
             alexa_camera_imageUri = item.conf['alexa_camera_imageUri']
             device.camera_imageUri = alexa_camera_imageUri
             self.logger.debug("Alexa4P3: {}-Camera-Image-Uri = {}".format(item.id(), device.camera_imageUri))
+        
+        if 'alexa_cam_modifiers' in item.conf:
+            alexa_cam_modifiers = item.conf['alexa_cam_modifiers']
+            device.camera_imageUri = alexa_cam_modifiers
+            self.logger.debug("Alexa4P3: {}-Camera-Stream-Modifiers = {}".format(item.id(), device.alexa_cam_modifiers))
+        
         # ---- Ende CamerStreamController    
         
         
@@ -406,6 +412,7 @@ class WebInterface(SmartPluginWebIf):
             newEntry = {}
             supported_actions = device.supported_actions()
             newEntry['AlexaName'] = device.name
+            newEntry['Alias_for'] = device.alias_for
             newEntry['Actions'] = ""
             for myAction in supported_actions:
                 #==================

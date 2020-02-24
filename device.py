@@ -37,6 +37,8 @@ class AlexaDevice(object):
         self.alexa_color_value_type = ''
         self.proxied_Urls = {}
         self.alexa_proxy_credentials=''
+        self.alias_for = ''
+        self.alexa_cam_modifiers = ''
 
     @classmethod
     def create_id_from_name(cls, name):
@@ -94,7 +96,7 @@ class AlexaDevice(object):
             alias_device.alexa_color_value_type = self.alexa_color_value_type
             alias_device.proxied_Urls = self.proxied_Urls
             alias_device.alexa_proxy_credentials = self.alexa_proxy_credentials
-
+            alias_device.alias_for = self.name
             alias_devices.append( alias_device )
 
         return alias_devices
@@ -123,7 +125,8 @@ class AlexaDevice(object):
             return False
 
         if not self.description:
-            logger.warning("Alexa-Device {}: empty description, fallback to name '{}' - please set `alexa_description`".format(self.id, self.name))
+            msg = "Alexa-Device {}: empty description, fallback to name '{}' - please set `alexa_description`".format(self.id, self.name)
+            logger.warning(msg)
             proto.addEntry('WARNING',msg)
             self.description = self.name
         elif len(self.description) > 128:

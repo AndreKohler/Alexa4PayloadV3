@@ -73,7 +73,8 @@ def CreateStreamPayLoad(myItemConf):
         i +=1
     response = {"cameraStreams": cameraStream}
     response.update({ "imageUri":imageuri})
-    DumpStreamInfo(response)
+    # only interesting for debugging 
+    #DumpStreamInfo(response)
     return response
 
 def DumpStreamInfo(directive):
