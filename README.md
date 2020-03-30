@@ -28,6 +28,7 @@
 
 
 - [der fast perfekte Rolladen](#perfect_blind) <sup><span style="color:red"> **Neu**</sup></span>
+- [Items in Abhängikeit des letzten benutzten Echos-Devices schalten](#get_last_alexa)<sup><span style="color:red"> **Neu**</sup></span>
 # --------------------------------------
 
 ## Generell <a name="generell"/></a>
@@ -44,8 +45,7 @@ Das Plugin muss in der plugin.yaml eingefügt werden :
 
 <pre><code>
 Alexa4P3:
-    class_name: Alexa4P3
-    class_path: plugins.Alexa4P3
+    plugin_name: Alexa4P3
     service_port: 9000
 </code></pre>
 
@@ -74,6 +74,9 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 
 ## Change Log <a name="changelog"/></a>
 
+### 12.03.2020
+- Ergänzung bei Wertänderung durch das Plugin wid der "Plugin Identifier" "alexa4p3" an die Change Item-Methode übegeben (PR #332)
+- 
 ### 07.12.2019
 - Web-Interface um Protokoll-Log ergänzt 
 - PlaybackController realisiert 
@@ -86,7 +89,7 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 - Web-Interface ergänzt
 - Prüfung auf Verwendung von gemischtem Payload V2/V3 im Web-Interface
 - Bug-Fix bei falsch definierten Devices (alexa_name fehlt) - Issue #300 - diese werden entfernt und ein Log-Eintrag erfolgt
-- Bug-Fix alexa-description (PR # 292) - die Beschreibung in der App lautet nun "device.name" + "by smarthomeNG"
+- Bug-Fix alexa-description (PR #292) - die Beschreibung in der App lautet nun "device.name" + "by smarthomeNG"
 - alexa_description beim Geräte Discovery ergänzt
 
 ### 20.04.2019
@@ -1101,9 +1104,10 @@ implementierte Funktionen:
 
 alexa_actions: Stop / Play / Pause / FastForward / Next / Previous / Rewind / StartOver
 
-# Beispiele <a name="Beispiel"/></a>
-
-## Der fast perfekte Rolladen <a name="perfect_blind"/></a>
+<a name="Beispiel"/></a>
+# Beispiele
+<a name="perfect_blind"/></a>
+## Der fast perfekte Rolladen
 
 Mit diesen Einstellungen kann ein Rolladen wie folgt gesteuert werden :
 
@@ -1189,3 +1193,40 @@ Für die Positionierung ist "alexa_item_range: 0-255" anzugeben.
                 alexa_range_delta: 20
                 alexa_item_range: 0-255
 </code></pre>
+
+<a name="get_last_alexa"/></a>
+## Items in Abhängikeit des letzten benutzten Echos-Devices schalten
+
+Wenn das AlexaRc4shNG-Plugin aktiviert ist kann über eine Logik das letzte Echo-Gerät welches einen Sprachbefehl bekommen hat ermittelt werden und abhängig davon können Items geschalten werden. So kann z.b. eine raumabhängige Steuerung für das Licht und Rolladen erstellt werden.
+
+Es wird ein Item für Licht pauschal erstellt :
+```
+        Licht_pauschal:
+            alexa_name: Licht
+            alexa_device: Licht_pauschal
+            alexa_description: Licht Pauschal
+            alexa_icon: OTHER
+            alexa_actions: TurnOn TurnOff
+            alexa_proactivelyReported: 'False'
+            type: num
+            visu_acl: rw
+            enforce_updates: 'true'
+```
+
+eine entsprechende Logik welche durch das item "Licht_pauschal" getriggert wird schaltet dann die entsprechenden Items.
+```
+#!/usr/bin/env python3
+#last_alexa.py
+
+myAlexa = sh.alexarc4shng.get_last_alexa()
+if myAlexa != None:
+    triggeredItem=trigger['source']
+    triggerValue = trigger['value']
+    if triggeredItem == "test.testzimmer.Licht_pauschal":
+        if myAlexa == "ShowKueche":
+            sh.EG.Kueche.Spots_Sued(triggerValue)
+        if myAlexa == "Wohnzimmer":
+            sh.OG.Wohnzimmer.Spots_Nord(triggerValue)
+            sh.OG.Wohnzimmer.Spots_Sued(triggerValue)
+
+```

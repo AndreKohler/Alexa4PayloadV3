@@ -44,7 +44,7 @@ from . import actions_lock
 # Tools for Payload V3 
 
 from . import p3_action
-
+import requests
 
 
 
@@ -335,6 +335,194 @@ class Alexa4P3(SmartPlugin):
         self.logger.info("Alexa: providing {} devices".format( len(self.devices.all()) ))
 
 
+    ################################################
+    # Function for Web-Interface to Test directives
+    ################################################
+    def load_command_let(self,cmdName,path=None):
+        myDescription   = ''
+        myUrl           = ''
+        myJson          = ''
+        retJson         = {}
+        
+        if path==None:
+            path=self.sh.get_basedir()+"/plugins/alexa4p3/directives/"
+            
+        try:
+            file=open(path+cmdName+'.cmd','r')
+            for line in file:
+                line=line.replace("\r\n","")
+                line=line.replace("\n","")
+                myFields=line.split("|")
+                if (myFields[0]=="apiurl"):
+                    myUrl=myFields[1]
+                    pass
+                if (myFields[0]=="description"):
+                    myDescription=myFields[1]
+                    pass
+                if (myFields[0]=="json"):
+                    myJson=myFields[1]
+                    retJson=json.loads(myJson)
+                    pass
+            file.close()
+        except:
+            self.logger.error("Error while loading Directive : {}".format(cmdName))
+        return myDescription,myUrl,retJson
+    
+
+    
+    def load_cmd_list(self):
+        retValue=[]
+        
+        files = os.listdir(self.sh.get_basedir()+'/plugins/alexa4p3/directives/')
+        for line in files:
+            try:
+                line=line.split(".")
+                if line[1] == "cmd":
+                    newCmd = {'Name':line[0]}
+                    retValue.append(newCmd)
+            except:
+                pass
+        
+        return json.dumps(retValue)
+
+    def check_json(self,payload):
+        try:
+            myDump = json.loads(payload)
+            return 'Json OK'
+        except Exception as err:
+            return 'Json - Not OK - '+ err.args[0]
+        
+    def delete_cmd_let(self,name):
+        result = ""
+        try:
+            os.remove(self.sh.get_basedir()+"/plugins/alexa4p3/directives/"+name+'.cmd')
+            result =  "Status:OK\n"
+            result += "value1:File deleted\n"
+        except Exception as err:
+            result =  "Status:failure\n"
+            result += "value1:Error - "+err.args[1]+"\n"
+        
+        ##################
+        # prepare Response
+        ##################
+        myResult = result.splitlines()
+        myResponse=[]
+        newEntry=dict()
+        for line in myResult:
+            myFields=line.split(":")
+            newEntry[myFields[0]] = myFields[1]
+
+        myResponse.append(newEntry)        
+        ##################
+        return json.dumps(myResponse,sort_keys=True)
+    
+    def test_cmd_let(self,selectedDevice,txtValue,txtDescription,txt_payload,txtApiUrl):
+        result = ""
+                    
+        JsonResult = self.check_json(txt_payload)
+        if (JsonResult != 'Json OK'):
+            result =  "Status:failure\n"
+            result += "value1:"+JsonResult+"\n"
+        else:
+            try:
+                myDummy=txt_payload.replace('<endpoint id>',selectedDevice)
+                myDummy=myDummy.replace('"<nValue>"',str(txtValue))
+                myDummy=myDummy.replace('<Instance>',selectedDevice)
+                myDummy = json.loads(myDummy)
+                myResponse = requests.post("http://127.0.0.1:9001", data = json.dumps(myDummy))
+                result =  "Status:OK\n"
+                result += "value1: HTTP "+str(myResponse.status_code)+"\n"
+                #result += "payload: HTTP "+str(myResponse.status_code)+"\n"
+            except Exception as err:
+                result =  "Status:failure\n"
+                result += "value1:"+err.args[0]+"\n"
+                
+        ##################
+        # prepare Response
+        ##################
+        myResult = result.splitlines()
+        myResponse=[]
+        newEntry=dict()
+        for line in myResult:
+            myFields=line.split(":")
+            newEntry[myFields[0]] = myFields[1]
+
+        myResponse.append(newEntry)        
+        ##################
+        return json.dumps(myResponse,sort_keys=True)
+
+    def load_cmd_2_webIf(self,txtCmdName):
+        try:
+            myDescription,myUrl,myDict = self.load_command_let(txtCmdName,None)
+            result =  "Status|OK\n"
+            result += "Description|"+myDescription+"\n"
+            result += "myUrl|"+myUrl+"\n"
+            result += "payload|"+str(myDict)+"\n"
+        except Exception as err:
+            result =  "Status|failure\n"
+            result += "value1|"+err.args[0]+"\n"
+        ##################
+        # prepare Response
+        ##################
+        myResult = result.splitlines()
+        myResponse=[]
+        newEntry=dict()
+        for line in myResult:
+            myFields=line.split("|")
+            newEntry[myFields[0]] = myFields[1]
+
+        myResponse.append(newEntry)        
+        ##################
+        return json.dumps(myResponse,sort_keys=True)
+        
+        
+    def save_cmd_let(self,name,description,payload,ApiURL,path=None):
+        if path==None:
+            path=self.sh.get_basedir()+"/plugins/alexa4p3/directives/"
+        
+        result = ""
+        mydummy = ApiURL[0:1]
+        if (ApiURL[0:1] != "/"):
+            ApiURL = "/"+ApiURL
+            
+        JsonResult = self.check_json(payload)
+        if (JsonResult != 'Json OK'):
+            result =  "Status:failure\n"
+            result += "value1:"+JsonResult+"\n"
+            
+        else:
+            try:
+                myDict = json.loads(payload)
+                myDump = json.dumps(myDict)
+                description=description.replace("\r"," ")
+                description=description.replace("\n"," ")
+                file=open(path+name+".cmd","w")
+                file.write("apiurl|"+ApiURL+"\r\n")
+                file.write("description|"+description+"\r\n")
+                file.write("json|"+myDump+"\r\n")
+                file.close
+    
+                result =  "Status:OK\n"
+                result += "value1:"+JsonResult + "\n"
+                result += "value2:Saved Directive\n"
+            except Exception as err:
+                print (err)
+        
+        ##################
+        # prepare Response
+        ##################
+        myResult = result.splitlines()
+        myResponse=[]
+        newEntry=dict()
+        for line in myResult:
+            myFields=line.split(":")
+            newEntry[myFields[0]] = myFields[1]
+
+        myResponse.append(newEntry)        
+        ##################
+        return json.dumps(myResponse,sort_keys=True)
+
+
 
     def init_webinterface(self):
         """"
@@ -429,6 +617,7 @@ class WebInterface(SmartPluginWebIf):
                 if not str(device.action_items[action_items][0]) in newEntry['Items']:
                     newEntry['Items'] +=str(device.action_items[action_items][0])+ ' / ' 
             newEntry['Items']=newEntry['Items'][:-2]
+            newEntry['DeviceID']=device.id
             alexa_items.append(newEntry)
             item_count += 1
         return item_count, alexa_items
@@ -443,6 +632,30 @@ class WebInterface(SmartPluginWebIf):
         self.plugin._proto.log = []
         return None
 
+    @cherrypy.expose
+    def handle_buttons_html(self,txtValue=None, selectedDevice=None,txtButton=None,txt_payload=None,txtCmdName=None,txtApiUrl=None,txtDescription=None):
+        if txtButton=="BtnSave":
+            result = self.plugin.save_cmd_let(txtCmdName,txtDescription,txt_payload,txtApiUrl)
+        elif txtButton =="BtnCheck":
+            pass
+        elif txtButton =="BtnLoad":
+            result = self.plugin.load_cmd_2_webIf(txtCmdName)
+            pass
+        elif txtButton =="BtnTest":
+            result = self.plugin.test_cmd_let(selectedDevice,txtValue,txtDescription,txt_payload,txtApiUrl)
+        elif txtButton =="BtnDelete":
+            result = self.plugin.delete_cmd_let(txtCmdName)
+        else:
+            pass
+        
+        #return self.render_template("index.html",txtresult=result)
+        return result
+                
+    
+    @cherrypy.expose
+    def build_cmd_list_html(self,reload=None):
+        myCommands = self.plugin.load_cmd_list()
+        return myCommands
     
     @cherrypy.expose
     def index(self, reload=None):

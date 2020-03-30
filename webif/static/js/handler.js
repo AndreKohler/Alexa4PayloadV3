@@ -5,76 +5,17 @@
 // 
 // Change-Log
 //
+// 2020-03-28   -   added Test-Functions to Web-IF
 // 2019-12-18   -   Change-Log eingeführt
 //*************************************************************
+
+
+
 
 //*************************************************************
 // check Auto-Updates for protocols
 //*************************************************************
-setInterval(Checkupdate4Protocolls, 2000);
-
-
-
-function send_discovery()
-{
-
-payload = {
-  "directive": {
-    "header": {
-      "namespace": "Alexa.Discovery",
-      "name": "Discover",
-      "messageId": "<message id>",
-      "payloadVersion": "3"
-    },
-    "payload": {
-      "scope": {
-        "type": "BearerToken",
-        "token": "<an OAuth2 bearer token>"
-      }
-    }
-  }
-}
-
-payload_string = JSON.stringify(payload)
-
-
-var xhr = new XMLHttpRequest();
-xhr.open("post", "192.168.178.37:9001", true);
-xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.setRequestHeader('Access-Control-Allow-Origin','*');
-xhr.send(payload_string);
-xhr.onload = function() {
-  console.log("HELLO")
-  console.log(this.responseText);
-  var data = JSON.parse(this.responseText);
-  console.log(data);
-}
-
-/*
-$.ajax({
-    url: "http://192.168.178.37:9001",
-    type: "POST",
-    data: { payload_string
-          },
-    contentType: "application/json; charset=utf-8",
-    success: function (response) {
-		     ShowPayload(response);
-    },
-    error: function () {
-        console.log("Error - while getting Directive-Response");
-    }
- });
-*/
-}
-
-
-//*************************************************************
-// ShowPayload
-//*************************************************************
-function ShowPayload(response)
-{
- console.write(response);
-}
+setInterval(Checkupdate4Protocolls, 5000);
 
 
 //*************************************************************

@@ -702,10 +702,11 @@ class AlexaRequestHandler(BaseHTTPRequestHandler):
                     'payload': {}
                 })
                 return
-        self._proto.addEntry('INFO   ', "received Directive {} for '{}' ".format(directive, device_id))
+        self._proto.addEntry('INFO   ', "received Directive {} for '{}' Payload : {}".format(directive, device_id, json.dumps(mydirective)))
         action = self.actions.for_directive(directive)
         if action:
             try:
+                self._proto.addEntry('INFO   ', "response Payload : {}".format(json.dumps(mydirective)))
                 self.respond( action(mydirective) )
             except Exception as e:
                 self.logger.error("Alexa P3: execution of control-directive '{}' failed: {}".format(directive, e))
