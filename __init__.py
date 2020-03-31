@@ -429,7 +429,7 @@ class Alexa4P3(SmartPlugin):
                 myDummy=myDummy.replace('"<nValue>"',str(txtValue))
                 myDummy=myDummy.replace('<Instance>',selectedDevice)
                 myDummy = json.loads(myDummy)
-                myResponse = requests.post("http://127.0.0.1:9001", data = json.dumps(myDummy))
+                myResponse = requests.post("http://127.0.0.1:"+str(self.service_port), data = json.dumps(myDummy))
                 result =  "Status:OK\n"
                 result += "value1: HTTP "+str(myResponse.status_code)+"\n"
                 #result += "payload: HTTP "+str(myResponse.status_code)+"\n"
