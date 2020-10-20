@@ -145,7 +145,7 @@ Das Plugin benötigt Modul Python-Requests. Dies sollte mit dem Core immer auf d
 
 Amazon Skill / Lambda <a name="Skill"/></a>
 Es muss ein funktionierender Skill in der Amazon Developer Konsole / AWS Lambda erstellt werden.
-Eine ausführliche Dokumentation ist hier(#./assets/Alexa_V3_plugin.pdf) zu finden
+Eine ausführliche Dokumentation ist hier[a relative link](./assets/Alexa_V3_plugin.pdf) zu finden
 
 Ansonsten keine Requirements.
 
