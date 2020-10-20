@@ -143,7 +143,9 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 
 Das Plugin benötigt Modul Python-Requests. Dies sollte mit dem Core immer auf dem aktuellen Stand mitkommen.
 
-Amazon Skill / Lambda <a name="Skill"/></a>
+<a name="Skill"/></a>
+## Amazon Skill / Lambda
+ 
 Es muss ein funktionierender Skill in der Amazon Developer Konsole / AWS Lambda erstellt werden.
 Eine ausführliche Dokumentation ist [hier](./assets/Alexa_V3_plugin.pdf) zu finden.
 Vielen Dank @schuma für die ausführliche Dokumentation
