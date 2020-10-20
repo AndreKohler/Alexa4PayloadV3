@@ -180,7 +180,7 @@ li.L5, li.L6, li.L7, li.L8
                     <div class="col" style="max-width: 100%;">
                         <div class="card">
                             <div class="card-header p-1 shng_heading">
-                                <a class="float-sm-right" href="#" onclick="reloadCmds();" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
+                                <a class="float-sm-right" href="#" onclick="reloadCmds();" title="{{ _('Neu Laden' ) }}"><span id="refresh-element" class="fas fa-sync"></span></a>
                                 <strong>{{ _('existing Directives') }}</strong>
                             </div>
                             <div class="card-body p-1">
@@ -544,7 +544,7 @@ function resizeCodeMirrors() {
     if (!yaml_resultCodeMirror.getOption("fullScreen")) {
         var browserHeight = $( window ).height();
         offsetTop = $('.CodeMirror').offset().top;
-        yaml_resultCodeMirror.getScrollerElement().style.maxHeight = ((-1)*(offsetTop) -1800 + browserHeight)+ 'px';
+        yaml_resultCodeMirror.getScrollerElement().style.maxHeight = ((-1)*(offsetTop) -600 + browserHeight)+ 'px';
         yaml_resultCodeMirror.refresh();
     }
 

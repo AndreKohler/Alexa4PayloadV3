@@ -4,24 +4,25 @@
 
 1. [Generell](#generell)
 2. [Change Log](#changelog)
-3. [Icon / Display Categories](#Icons)<sup><span style="color:blue"> **Update**</sup></span>
-4. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
-5. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
-6. [Alexa-PowerController](#PowerController)
-7. [Alexa-BrightnessController](#BrightnessController)
-8. [Alexa-PowerLevelController](#PowerLevelController)
-9. [Alexa-PercentageController](#PercentageController)
-10. [Alexa-LockController](#LockController)
-11. [Alexa-CameraStreamController](#CameraStreamController) <sup><span style="color:blue"> **Update**</sup></span>
-12. [Alexa-SceneController](#SceneController)
-13. [Alexa-ContactSensor](#ContactSensor)
-14. [Alexa-ColorController](#ColorController)
-15. [Alexa-RangeController](#RangeController) <sup><span style="color:red"> **Neu**</sup></span>
-16. [Alexa-ColorTemperaturController](#ColorTemperaturController) <sup><span style="color:red"> **Neu**</sup></span>
-17. [Alexa-PlaybackController](#PlaybackController) <sup><span style="color:red"> **Neu**</sup></span>
-18.
-19.
-20. [Web-Interface](#Web-Interface) <sup><span style="color:red"> **Neu**</sup></span>
+3. [Requrirements](#requirements)<br>
+   [Einrichtung Amazon-Skill / Lambda-Funktion](#Skill)<sup><span style="color:red"> **Neu**</sup></span>
+4. [Icon / Display Categories](#Icons)<sup><span style="color:blue"> **Update**</sup></span>
+5. [Entwicklung / Einbau von neuen Skills](#Entwicklung)
+6. [Alexa-ThermostatController](#ThermostatController) + [Thermosensor](#Thermostatsensor)
+7. [Alexa-PowerController](#PowerController)
+8. [Alexa-BrightnessController](#BrightnessController)
+9. [Alexa-PowerLevelController](#PowerLevelController)
+10. [Alexa-PercentageController](#PercentageController)
+11. [Alexa-LockController](#LockController)
+12. [Alexa-CameraStreamController](#CameraStreamController) <sup><span style="color:blue"> **Update**</sup></span>
+13. [Alexa-SceneController](#SceneController)
+14. [Alexa-ContactSensor](#ContactSensor)
+15. [Alexa-ColorController](#ColorController)
+16. [Alexa-RangeController](#RangeController) <sup><span style="color:red"> **Neu**</sup></span>
+17. [Alexa-ColorTemperaturController](#ColorTemperaturController) <sup><span style="color:red"> **Neu**</sup></span>
+18. [Alexa-PlaybackController](#PlaybackController) <sup><span style="color:red"> **Neu**</sup></span>
+19. [Web-Interface](#webinterface) <sup><span style="color:red"> **Neu**</sup></span>
+
 
 
 ## [Beispiel-Konfigurationen](#Beispiel) <sup><span style="color:red"> **Neu**</sup></span>
@@ -74,9 +75,15 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 
 ## Change Log <a name="changelog"/></a>
 
+### 20.10.2020
+- Doku von Schuma für die Einrichtung des Skills bei Amazon ergänzt - eingefügt bei Requirements
+
+### 11.04.2020
+- Version auf 1.0.2 für shNG Release 1.7 erhöht
+
 ### 12.03.2020
 - Ergänzung bei Wertänderung durch das Plugin wid der "Plugin Identifier" "alexa4p3" an die Change Item-Methode übegeben (PR #332)
-- 
+
 ### 07.12.2019
 - Web-Interface um Protokoll-Log ergänzt 
 - PlaybackController realisiert 
@@ -130,6 +137,17 @@ Die Actions unterscheiden sich zwischen Payload V2 und V3 oft nur durch Gross/Kl
 - Scene Controller eingebaut
 - Doku für Scene Controller erstellt
 - PercentageController eingebaut
+
+<a name="requirements"/></a>
+## Requrirements
+
+Das Plugin benötigt Modul Python-Requests. Dies sollte mit dem Core immer auf dem aktuellen Stand mitkommen.
+
+Amazon Skill / Lambda <a name="Skill"/></a>
+Es muss ein funktionierender Skill in der Amazon Developer Konsole / AWS Lambda erstellt werden.
+Eine ausführliche Dokumentation ist hier(#./assets/Alexa_V3_plugin.pdf) zu finden
+
+Ansonsten keine Requirements.
 
 ## Icons / Catagories<a name="Icons"/></a>
 Optional kann im Item angegeben werden welches Icon in der Alexa-App verwendet werden soll :
@@ -1103,6 +1121,27 @@ Alle Actions senden jeweils ein "True" bzw. "EIN" bzw. "1"
 implementierte Funktionen:
 
 alexa_actions: Stop / Play / Pause / FastForward / Next / Previous / Rewind / StartOver
+
+<a name="webinterface"/></a>
+# Web-Interface
+
+Das Plugin bietet ein Web-Interface an. 
+
+Auf der ersten Seite werden alle Alexa-Geräte, die definierten Actions sowie die jeweiligen Aliase angezeigt. Actions in Payload-Version 3 werden grün angezeigt. Actions in Payload-Version 2 werden in rot angezeigt.
+Eine Zusammenfassung wird oben rechts dargestellt. Durch anklicken eine Zeile kann ein Alexa-Geräte für die Testfunktionen auf Seite 3 des Web-Interfaces auswewählt werden
+![webif_Seite1](./assets/Alexa4P3_Seite1.jpg)
+
+Auf der Zweiten Seite wird ein Kommunikationsprotokoll zur Alexa-Cloud angezeigt.
+![webif_Seite2](./assets/Alexa4P3_Seite2.jpg)
+
+Auf Seite drei können "Directiven" ähnlich wie in der Lambda-Test-Funktion der Amazon-Cloud ausgeführt werden. Der jeweilige Endpunkt ist auf Seite 1 duch anklicken zu wählen. Die Kommunikation wird auf Seite 2 protokolliert.
+So könnne einzelne Geräte und "Actions" getestet werden.
+
+![webif_Seite3](./assets/Alexa4P3_Seite3.jpg)
+
+Auf Seite 4 kann interaktiv ein YAML-Eintrag für einen Alexa-Kamera erzeugt werden. Der fertige YAML-Eintrag wird unten erzeugt und kann via Cut & Paste in die Item-Definition von shNG übernommen werden.
+
+![webif_Seite4](./assets/Alexa4P3_Seite4.jpg)
 
 <a name="Beispiel"/></a>
 # Beispiele
